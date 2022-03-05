@@ -1,7 +1,7 @@
 import bpy
 
 # from . import ArmatureManager, CopyAction, MeshAndBones
-from . import FaceRigSetup
+from . import FaceRigSetup, ResetStretch
 
 # Main UI
 # ===========================================================================================
@@ -16,4 +16,6 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
         # 状態によって使うUIを切り替える
         if context.mode == "EDIT_ARMATURE":
             FaceRigSetup.ui_draw(context, self.layout)
+        if context.mode == "POSE":
+            ResetStretch.ui_draw(context, self.layout)
 

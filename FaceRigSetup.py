@@ -1,4 +1,5 @@
 import bpy, mathutils
+from . import ResetStretch
 
 AFR_CONTROL_BONE_PREFIX = "AFR_ctrl_"
 
@@ -26,13 +27,21 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
 
         marge_threshold = 0.0001
 
+        if len(deform_bones) > 0:
+            control_bone_size = 0
+            for db in deform_bones:
+                control_bone_size += (db.tail-db.head).length
+            control_bone_size = control_bone_size / len(deform_bones) * 1.5
+        else:
+            control_bone_size = 1.0
+
         # headの位置にControlBoneを生やす
         new_control_bones = []
         for bone in deform_bones:
             # 近い位置にControlBoneがない場合のみ生成
             head_nearest_bone = self.find_nearest_bone(bone.head, new_control_bones, marge_threshold)
             if not head_nearest_bone:
-                new_bone = self.create_ctrl_bone(armature, bone.name, bone.head)
+                new_bone = self.create_ctrl_bone(armature, bone.name, bone.head, control_bone_size)
                 new_control_bones.append(new_bone)
             else:
                 new_bone = head_nearest_bone
@@ -45,7 +54,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         for bone in deform_bones:
             # 近い位置にControlBoneがない場合のみ生成
             if not self.find_nearest_bone(bone.tail, new_control_bones, marge_threshold):
-                new_bone = self.create_ctrl_bone(armature, bone.name, bone.tail)
+                new_bone = self.create_ctrl_bone(armature, bone.name, bone.tail, control_bone_size)
                 new_control_bones.append(new_bone)
 
         # constraintの設定(tailが重なっているのがtarget)
@@ -74,8 +83,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         return nearest_bone  # 頂点が近いBoneがなかった
 
     # ControlBoneを生やす
-    def create_ctrl_bone(self, armature, base_name, point):
-        ctrl_bone_size = 1.0
+    def create_ctrl_bone(self, armature, base_name, point, ctrl_bone_size=1.0):
         ctrl_bone = armature.data.edit_bones.new(AFR_CONTROL_BONE_PREFIX + base_name)
         ctrl_bone.use_connect = False
         ctrl_bone.use_deform = False
@@ -149,8 +157,3 @@ def ui_draw(context, layout):
     box.operator("anime_face_rig.remove_by_prefix")
     box.operator("anime_face_rig.remove_control_bones")
 
-
-# =================================================================================================
-# def register():
-#     # Rollの参照用メッシュ
-#     bpy.types.Scene.AHT_roll_reference = bpy.props.PointerProperty(type=ListupProperty)
