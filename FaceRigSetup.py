@@ -29,8 +29,13 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         # headの位置にControlBoneを生やす
         new_control_bones = []
         for bone in deform_bones:
-            new_bone = self.create_ctrl_bone(armature, bone.name, bone.head)
-            new_control_bones.append(new_bone)
+            # 近い位置にControlBoneがない場合のみ生成
+            head_nearest_bone = self.find_nearest_bone(bone.head, new_control_bones, marge_threshold)
+            if not head_nearest_bone:
+                new_bone = self.create_ctrl_bone(armature, bone.name, bone.head)
+                new_control_bones.append(new_bone)
+            else:
+                new_bone = head_nearest_bone
 
             # headの位置のControlBoneは親にする
             bone.use_connect = False
@@ -38,7 +43,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
 
         # tailの位置にControlBoneを生やす
         for bone in deform_bones:
-            # tailの時は近い位置にControlBoneがない場合のみ生成
+            # 近い位置にControlBoneがない場合のみ生成
             if not self.find_nearest_bone(bone.tail, new_control_bones, marge_threshold):
                 new_bone = self.create_ctrl_bone(armature, bone.name, bone.tail)
                 new_control_bones.append(new_bone)
