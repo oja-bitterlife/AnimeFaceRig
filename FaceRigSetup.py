@@ -1,4 +1,5 @@
 import bpy, mathutils
+import math
 
 # from .Util.ListupUtil import ListupProperty
 
@@ -25,18 +26,49 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         for bone in control_bones:
             armature.data.edit_bones.remove(bone)
 
-        # ControlBoneの置く場所を調べる
-        ctrl_bone_points = []
         marge_threshold = 0.0001
-        for bone in deform_bones:
-            if not self.is_point_in_list(bone.head, ctrl_bone_points, marge_threshold):
-                self.create_ctrl_bone(armature, bone.name, bone.head)
-                ctrl_bone_points.append(bone.head)
-            if not self.is_point_in_list(bone.tail, ctrl_bone_points, marge_threshold):
-                self.create_ctrl_bone(armature, bone.name, bone.tail)
-                ctrl_bone_points.append(bone.tail)
 
-        return{'FINISHED'}
+        # headの位置にControlBoneを生やす
+        new_control_bones = []
+        for bone in deform_bones:
+            new_bone = self.create_ctrl_bone(armature, bone.name, bone.head)
+            new_control_bones.append(new_bone)
+
+            # headの位置のControlBoneは親にする
+            bone.use_connect = False
+            bone.parent = new_bone
+
+        # tailの位置にControlBoneを生やす
+        for bone in deform_bones:
+            # tailの時は近い位置にControlBoneがない場合のみ生成
+            if not self.find_nearest_bone(bone.tail, new_control_bones, marge_threshold):
+                new_bone = self.create_ctrl_bone(armature, bone.name, bone.tail)
+                new_control_bones.append(new_bone)
+
+        # constraintの設定(tailが重なっているのがtarget)
+        for bone in deform_bones:
+            target_bone = self.find_nearest_bone(bone.tail, new_control_bones)
+            if target_bone:
+                self.create_constraints(bone, target_bone)
+
+        return {'FINISHED'}
+
+    # リスト内に近い頂点がないか調べる
+    def find_nearest_bone(self, point, bone_list, threshold=0.000001):
+        nearest_bone = None
+        min_length = threshold
+        for b in bone_list:
+            length = (b.head-point).length
+            # 0より小さくなることはないので終了            
+            if length == 0:
+                return b
+
+            # 距離がより近いBoneを選択する
+            if length < min_length:
+                nearest_bone = b
+                min_length = length
+
+        return nearest_bone  # 頂点が近いBoneがなかった
 
     # ControlBoneを生やす
     def create_ctrl_bone(self, armature, base_name, point):
@@ -47,13 +79,10 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         ctrl_bone.head = point
         ctrl_bone.tail = point + mathutils.Vector((0, -ctrl_bone_size, 0))
 
+        return ctrl_bone
 
-    # リスト内に近い頂点がないか調べる
-    def is_point_in_list(self, point, point_list, threshold=0.0):
-        for p in point_list:
-            if (p-point).length <= threshold:
-                return True
-        return False
+    def create_constraints(self, bone, target_bone):
+        print(bone)
 
 
 
