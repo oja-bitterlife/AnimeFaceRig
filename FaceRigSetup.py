@@ -18,12 +18,11 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
             if bone.select and is_layer_enable(armature, bone):
                 selected_bones.append(bone)
 
-        control_bones = [bone for bone in selected_bones if not bone.use_deform]
+        # deform_boneだけ選別しておく
         deform_bones = [bone for bone in selected_bones if bone.use_deform]
 
-        # 選択中のControlBoneを削除する
-        for bone in control_bones:
-            armature.data.edit_bones.remove(bone)
+        # 以前の設定を一旦削除
+        remove_from_selected(context, armature, selected_bones)
 
         marge_threshold = 0.0001
 
@@ -84,30 +83,22 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
     def create_constraints(self, context, edit_bone, target_armature, target_bone):
         pose_bone = context.object.pose.bones[edit_bone.name]
 
-        damped_track = self.find_or_new_constraint(pose_bone, "DAMPED_TRACK")
+        damped_track = pose_bone.constraints.new("DAMPED_TRACK")
         damped_track.target = bpy.data.objects[target_armature.name]
         damped_track.subtarget = target_bone.name
+        damped_track.name = AFR_CONTROL_BONE_PREFIX + "DAMPED_TRACK"
 
-        stretch_to = self.find_or_new_constraint(pose_bone, "STRETCH_TO")
+        stretch_to = pose_bone.constraints.new("STRETCH_TO")
         stretch_to.target = bpy.data.objects[target_armature.name]
         stretch_to.subtarget = target_bone.name
-        stretch_to.rest_length = (edit_bone.head-edit_bone.tail).length
-
-    # コンストレイントをTypeで探す。なければ新規で作る
-    def find_or_new_constraint(self, pose_bone, type_name):
-        # すでに存在していたらそれを返す
-        for c in pose_bone.constraints:
-            if c.type == type_name:
-                return c
-        # なければ新たに作る
-        return pose_bone.constraints.new(type_name)
+        stretch_to.name = AFR_CONTROL_BONE_PREFIX + "STRETCH_TO"
 
 
 # ボーン名規約に沿ったボーンを削除する
 # =================================================================================================
-class ANIME_FACE_RIG_OT_remove_by_prefix(bpy.types.Operator):
+class ANIME_FACE_RIG_OT_remove_from_selected(bpy.types.Operator):
     bl_idname = "anime_face_rig.remove_by_prefix"
-    bl_label = "Remove By Prefix(AFR_ctrl_)"
+    bl_label = "Remove From Selected"
 
     # execute
     def execute(self, context):
@@ -118,35 +109,21 @@ class ANIME_FACE_RIG_OT_remove_by_prefix(bpy.types.Operator):
             if bone.select and is_layer_enable(armature, bone):
                 selected_bones.append(bone)
 
-        for bone in selected_bones:
-            # Prefixチェック
-            if bone.name.startswith(AFR_CONTROL_BONE_PREFIX):
-                armature.data.edit_bones.remove(bone)
+        remove_from_selected(context, armature, selected_bones)
 
         return {'FINISHED'}
 
+def remove_from_selected(context, armature, edit_bone_list):
+    for bone in edit_bone_list:
+        # Prefixチェック
+        if bone.name.startswith(AFR_CONTROL_BONE_PREFIX) and not bone.use_deform:
+            armature.data.edit_bones.remove(bone)
+            continue
 
-# ControlBoneを削除する
-# =================================================================================================
-class ANIME_FACE_RIG_OT_remove_control_bones(bpy.types.Operator):
-    bl_idname = "anime_face_rig.remove_control_bones"
-    bl_label = "Remove Control Bones"
-
-    # execute
-    def execute(self, context):
-        # 編集対象ボーンの回収
-        armature = bpy.context.active_object
-        selected_bones = []
-        for bone in armature.data.edit_bones:
-            if bone.select and is_layer_enable(armature, bone):
-                selected_bones.append(bone)
-
-        for bone in selected_bones:
-            # ControlBoneチェック
-            if not bone.use_deform:
-                armature.data.edit_bones.remove(bone)
-
-        return{'FINISHED'}
+        pose_bone = context.object.pose.bones[bone.name]
+        for constraint in pose_bone.constraints:
+            if constraint.name.startswith(AFR_CONTROL_BONE_PREFIX):
+                pose_bone.constraints.remove(constraint)
 
 
 # boneが含まれているレイヤーがArmatureの表示レイヤーになっているかどうか
