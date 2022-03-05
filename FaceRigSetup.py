@@ -1,7 +1,6 @@
 import bpy, mathutils
-import math
 
-# from .Util.ListupUtil import ListupProperty
+AFR_CONTROL_BONE_PREFIX = "AFR_ctrl_"
 
 
 # 選択中のBoneのRollを設定する
@@ -73,7 +72,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
     # ControlBoneを生やす
     def create_ctrl_bone(self, armature, base_name, point):
         ctrl_bone_size = 1.0
-        ctrl_bone = armature.data.edit_bones.new("AFR_ctrl_" + base_name)
+        ctrl_bone = armature.data.edit_bones.new(AFR_CONTROL_BONE_PREFIX + base_name)
         ctrl_bone.use_connect = False
         ctrl_bone.use_deform = False
         ctrl_bone.head = point
@@ -81,6 +80,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
 
         return ctrl_bone
 
+    # コンストレイントを設定する
     def create_constraints(self, context, edit_bone, target_armature, target_bone):
         pose_bone = context.object.pose.bones[edit_bone.name]
 
@@ -93,7 +93,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         stretch_to.subtarget = target_bone.name
         stretch_to.rest_length = (edit_bone.head-edit_bone.tail).length
 
-
+    # コンストレイントをTypeで探す。なければ新規で作る
     def find_or_new_constraint(self, pose_bone, type_name):
         # すでに存在していたらそれを返す
         for c in pose_bone.constraints:
@@ -103,46 +103,50 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         return pose_bone.constraints.new(type_name)
 
 
-# # 選択中BoneのConnect/Disconnect
-# # =================================================================================================
-# class ANIME_HAIR_TOOLS_OT_setup_bone_connect(bpy.types.Operator):
-#     bl_idname = "anime_hair_tools.setup_bone_connect"
-#     bl_label = "Connect All"
+# ボーン名規約に沿ったボーンを削除する
+# =================================================================================================
+class ANIME_FACE_RIG_OT_remove_by_prefix(bpy.types.Operator):
+    bl_idname = "anime_face_rig.remove_by_prefix"
+    bl_label = "Remove By Prefix(AFR_ctrl_)"
 
-#     # execute
-#     def execute(self, context):
-#         # 編集対象ボーンの回収
-#         armature = bpy.context.active_object
-#         selected_bones = []
-#         for bone in armature.data.edit_bones:
-#             if bone.select and is_layer_enable(armature, bone):
-#                 selected_bones.append(bone)
+    # execute
+    def execute(self, context):
+        # 編集対象ボーンの回収
+        armature = bpy.context.active_object
+        selected_bones = []
+        for bone in armature.data.edit_bones:
+            if bone.select and is_layer_enable(armature, bone):
+                selected_bones.append(bone)
 
-#         # connect
-#         for bone in selected_bones:
-#             bone.use_connect = True
+        for bone in selected_bones:
+            # Prefixチェック
+            if bone.name.startswith(AFR_CONTROL_BONE_PREFIX):
+                armature.data.edit_bones.remove(bone)
 
-#         return{'FINISHED'}
+        return {'FINISHED'}
 
 
-# class ANIME_HAIR_TOOLS_OT_setup_bone_disconnect(bpy.types.Operator):
-#     bl_idname = "anime_hair_tools.setup_bone_disconnect"
-#     bl_label = "Disconnect All"
+# ControlBoneを削除する
+# =================================================================================================
+class ANIME_FACE_RIG_OT_remove_control_bones(bpy.types.Operator):
+    bl_idname = "anime_face_rig.remove_control_bones"
+    bl_label = "Remove Control Bones"
 
-#     # execute
-#     def execute(self, context):
-#         # 編集対象ボーンの回収
-#         armature = bpy.context.active_object
-#         selected_bones = []
-#         for bone in armature.data.edit_bones:
-#             if bone.select and is_layer_enable(armature, bone):
-#                 selected_bones.append(bone)
+    # execute
+    def execute(self, context):
+        # 編集対象ボーンの回収
+        armature = bpy.context.active_object
+        selected_bones = []
+        for bone in armature.data.edit_bones:
+            if bone.select and is_layer_enable(armature, bone):
+                selected_bones.append(bone)
 
-#         # disconnect
-#         for bone in selected_bones:
-#             bone.use_connect = False
+        for bone in selected_bones:
+            # ControlBoneチェック
+            if not bone.use_deform:
+                armature.data.edit_bones.remove(bone)
 
-#         return{'FINISHED'}
+        return{'FINISHED'}
 
 
 # boneが含まれているレイヤーがArmatureの表示レイヤーになっているかどうか
@@ -160,6 +164,8 @@ def ui_draw(context, layout):
     layout.label(text="Face Rig Setting:")
     box = layout.box()
     box.operator("anime_face_rig.setup_from_deform_bones")
+    box.operator("anime_face_rig.remove_by_prefix")
+    box.operator("anime_face_rig.remove_control_bones")
 
 
 # =================================================================================================
