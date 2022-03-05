@@ -49,7 +49,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         for bone in deform_bones:
             target_bone = self.find_nearest_bone(bone.tail, new_control_bones)
             if target_bone:
-                self.create_constraints(bone, target_bone)
+                self.create_constraints(context, bone, armature, target_bone)
 
         return {'FINISHED'}
 
@@ -81,9 +81,26 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
 
         return ctrl_bone
 
-    def create_constraints(self, bone, target_bone):
-        print(bone)
+    def create_constraints(self, context, edit_bone, target_armature, target_bone):
+        pose_bone = context.object.pose.bones[edit_bone.name]
 
+        damped_track = self.find_or_new_constraint(pose_bone, "DAMPED_TRACK")
+        damped_track.target = bpy.data.objects[target_armature.name]
+        damped_track.subtarget = target_bone.name
+
+        stretch_to = self.find_or_new_constraint(pose_bone, "STRETCH_TO")
+        stretch_to.target = bpy.data.objects[target_armature.name]
+        stretch_to.subtarget = target_bone.name
+        stretch_to.rest_length = (edit_bone.head-edit_bone.tail).length
+
+
+    def find_or_new_constraint(self, pose_bone, type_name):
+        # すでに存在していたらそれを返す
+        for c in pose_bone.constraints:
+            if c.type == type_name:
+                return c
+        # なければ新たに作る
+        return pose_bone.constraints.new(type_name)
 
 
 # # 選択中BoneのConnect/Disconnect
