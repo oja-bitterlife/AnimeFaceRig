@@ -18,16 +18,43 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
             if bone.select and is_layer_enable(armature, bone):
                 selected_bones.append(bone)
 
+        control_bones = [bone for bone in selected_bones if not bone.use_deform]
+        deform_bones = [bone for bone in selected_bones if bone.use_deform]
 
-        # size = 1.0
-        # for bone in selected_bones:
-        #     print(bone.head)
-        #     ctrl_bone = armature.data.edit_bones.new(bone.name + "_AFR_ctrl")
-        #     ctrl_bone.use_connect = False
-        #     ctrl_bone.head = bone.head
-        #     ctrl_bone.tail = bone.head + mathutils.Vector((0, 0, 1))
+        # 選択中のControlBoneを削除する
+        for bone in control_bones:
+            armature.data.edit_bones.remove(bone)
+
+        # ControlBoneの置く場所を調べる
+        ctrl_bone_points = []
+        marge_threshold = 0.0001
+        for bone in deform_bones:
+            if not self.is_point_in_list(bone.head, ctrl_bone_points, marge_threshold):
+                self.create_ctrl_bone(armature, bone.name, bone.head)
+                ctrl_bone_points.append(bone.head)
+            if not self.is_point_in_list(bone.tail, ctrl_bone_points, marge_threshold):
+                self.create_ctrl_bone(armature, bone.name, bone.tail)
+                ctrl_bone_points.append(bone.tail)
 
         return{'FINISHED'}
+
+    # ControlBoneを生やす
+    def create_ctrl_bone(self, armature, base_name, point):
+        ctrl_bone_size = 1.0
+        ctrl_bone = armature.data.edit_bones.new("AFR_ctrl_" + base_name)
+        ctrl_bone.use_connect = False
+        ctrl_bone.use_deform = False
+        ctrl_bone.head = point
+        ctrl_bone.tail = point + mathutils.Vector((0, -ctrl_bone_size, 0))
+
+
+    # リスト内に近い頂点がないか調べる
+    def is_point_in_list(self, point, point_list, threshold=0.0):
+        for p in point_list:
+            if (p-point).length <= threshold:
+                return True
+        return False
+
 
 
 # # 選択中BoneのConnect/Disconnect
