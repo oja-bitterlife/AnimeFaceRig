@@ -1,11 +1,11 @@
 import bpy
 
 
-# Deform Bones
+# Show Only Deform Bones
 # =================================================================================================
-class ANIME_FACE_RIG_OT_show_deform(bpy.types.Operator):
-    bl_idname = "anime_face_rig.show_deform"
-    bl_label = "Show Deform Bones"
+class ANIME_FACE_RIG_OT_show_deform_only(bpy.types.Operator):
+    bl_idname = "anime_face_rig.show_deform_only"
+    bl_label = "Show Deform Only"
 
     # execute
     def execute(self, context):
@@ -13,31 +13,16 @@ class ANIME_FACE_RIG_OT_show_deform(bpy.types.Operator):
         armature = bpy.context.active_object
         for pose_bone in armature.pose.bones:
             bone = context.object.data.bones[pose_bone.name]
-            if bone.use_deform:
-                pose_bone.bone.hide = False
+            pose_bone.bone.hide = not bone.use_deform
 
         return {'FINISHED'}
 
-class ANIME_FACE_RIG_OT_hide_deform(bpy.types.Operator):
-    bl_idname = "anime_face_rig.hide_deform"
-    bl_label = "Hide Deform Bones"
 
-    # execute
-    def execute(self, context):
-        # 全PoseBone対象
-        armature = bpy.context.active_object
-        for pose_bone in armature.pose.bones:
-            bone = context.object.data.bones[pose_bone.name]
-            if bone.use_deform:
-                pose_bone.bone.hide = True
-
-        return {'FINISHED'}
-
-# Hide Control Bones
+# Show Only Control Bones
 # =================================================================================================
-class ANIME_FACE_RIG_OT_show_control(bpy.types.Operator):
-    bl_idname = "anime_face_rig.show_control"
-    bl_label = "Show Control Bones"
+class ANIME_FACE_RIG_OT_show_control_only(bpy.types.Operator):
+    bl_idname = "anime_face_rig.show_control_only"
+    bl_label = "Show Control Only"
 
     # execute
     def execute(self, context):
@@ -45,23 +30,23 @@ class ANIME_FACE_RIG_OT_show_control(bpy.types.Operator):
         armature = bpy.context.active_object
         for pose_bone in armature.pose.bones:
             bone = context.object.data.bones[pose_bone.name]
-            if not bone.use_deform:
-                pose_bone.bone.hide = False
+            pose_bone.bone.hide = bone.use_deform
 
         return {'FINISHED'}
 
-class ANIME_FACE_RIG_OT_hide_control(bpy.types.Operator):
-    bl_idname = "anime_face_rig.hide_control"
-    bl_label = "Hide Control Bones"
+
+# Show All
+# =================================================================================================
+class ANIME_FACE_RIG_OT_show_all(bpy.types.Operator):
+    bl_idname = "anime_face_rig.show_all"
+    bl_label = "Show All"
 
     # execute
     def execute(self, context):
         # 全PoseBone対象
         armature = bpy.context.active_object
         for pose_bone in armature.pose.bones:
-            bone = context.object.data.bones[pose_bone.name]
-            if not bone.use_deform:
-                pose_bone.bone.hide = True
+            pose_bone.bone.hide = False
 
         return {'FINISHED'}
 
@@ -71,7 +56,6 @@ class ANIME_FACE_RIG_OT_hide_control(bpy.types.Operator):
 def ui_draw(context, layout):
     # 選択中BoneにControll用Boneを生やす
     layout.label(text="Face Rig Edit Support:")
-    layout.operator("anime_face_rig.show_deform")
-    layout.operator("anime_face_rig.show_control")
-    layout.operator("anime_face_rig.hide_deform")
-    layout.operator("anime_face_rig.hide_control")
+    layout.operator("anime_face_rig.show_deform_only")
+    layout.operator("anime_face_rig.show_control_only")
+    layout.operator("anime_face_rig.show_all")
