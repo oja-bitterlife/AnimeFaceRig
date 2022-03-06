@@ -1,7 +1,7 @@
 import bpy
 
-# from . import ArmatureManager, CopyAction, MeshAndBones
-from . import FaceRigSetup, ResetStretch
+from . import FaceRigSetup, ResetStretch, ShowCtrlInPose
+
 
 # Main UI
 # ===========================================================================================
@@ -18,4 +18,5 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             FaceRigSetup.ui_draw(context, self.layout)
         if context.mode == "POSE":
             ResetStretch.ui_draw(context, self.layout)
+            ShowCtrlInPose.ui_draw(context, self.layout)
 
