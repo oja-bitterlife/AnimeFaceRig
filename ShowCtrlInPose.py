@@ -72,6 +72,6 @@ def ui_draw(context, layout):
     # 選択中BoneにControll用Boneを生やす
     layout.label(text="Face Rig Edit Support:")
     layout.operator("anime_face_rig.show_deform")
-    layout.operator("anime_face_rig.hide_deform")
     layout.operator("anime_face_rig.show_control")
+    layout.operator("anime_face_rig.hide_deform")
     layout.operator("anime_face_rig.hide_control")
