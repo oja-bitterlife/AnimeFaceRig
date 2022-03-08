@@ -53,7 +53,7 @@ class ANIME_FACE_RIG_OT_show_all(bpy.types.Operator):
 
 # Reset All
 # =================================================================================================
-class ANIME_FACE_RIG_OT_show_all(bpy.types.Operator):
+class ANIME_FACE_RIG_OT_reset_all(bpy.types.Operator):
     bl_idname = "anime_face_rig.reset_all"
     bl_label = "Reset All"
 
