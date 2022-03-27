@@ -59,12 +59,18 @@ class ANIME_POSE_TOOLS_OT_reset_all(bpy.types.Operator):
 
     # execute
     def execute(self, context):
-        # 全レイヤー表示
-        for i in range(len(context.object.data.layers)):
-            context.object.data.layers[i] = True
-
-        # 全PoseBone表示
         armature = bpy.context.active_object
+
+        # ボーンの存在する全レイヤー表示
+        visible_list = [False]*len(context.object.data.layers)
+        for bone in armature.data.bones:
+            for i, layer in enumerate(bone.layers):
+                if layer:
+                    visible_list[i]= True
+        for i, layer in enumerate(visible_list):
+            context.object.data.layers[i] = visible_list[i]
+        
+        # 全PoseBone表示
         for pose_bone in armature.pose.bones:
             pose_bone.bone.hide = False
 
