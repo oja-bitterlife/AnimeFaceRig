@@ -85,12 +85,10 @@ class ANIME_POSE_TOOLS_OT_reset_all(bpy.types.Operator):
 # UI描画設定
 # =================================================================================================
 def ui_draw(context, layout):
-    # 選択中BoneにControll用Boneを生やす
     layout.label(text="Select Util:")
 
-    # box = layout.box()
-    # box.label(text="")
-    layout.operator("anime_pose_tools.show_deform_only")
-    layout.operator("anime_pose_tools.show_control_only")
-    layout.operator("anime_pose_tools.show_all")
-    layout.operator("anime_pose_tools.reset_all")
+    box = layout.box()
+    box.operator("anime_pose_tools.show_deform_only")
+    box.operator("anime_pose_tools.show_control_only")
+    box.operator("anime_pose_tools.show_all")
+    box.operator("anime_pose_tools.reset_all")

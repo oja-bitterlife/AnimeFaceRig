@@ -1,6 +1,6 @@
 import bpy
 
-from . import FaceRigSetup, ResetStretch, ShowCtrlInPose
+from . import FaceRigSetup, ResetStretch, ShowCtrlInPose, PositionMode
 
 
 # Main UI
@@ -19,4 +19,6 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
         if context.mode == "POSE":
             ResetStretch.ui_draw(context, self.layout)
             ShowCtrlInPose.ui_draw(context, self.layout)
+        if context.mode == "OBJECT":
+            PositionMode.ui_draw(context, self.layout)
 

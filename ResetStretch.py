@@ -32,4 +32,5 @@ class ANIME_POSE_TOOLS_OT_reset_facerig_stretchto(bpy.types.Operator):
 def ui_draw(context, layout):
     # 選択中BoneにControll用Boneを生やす
     layout.label(text="Face Rig Setting:")
-    layout.operator("anime_face_rig.reset_facerig_stretchto")
+    box = layout.box()
+    box.operator("anime_face_rig.reset_facerig_stretchto")

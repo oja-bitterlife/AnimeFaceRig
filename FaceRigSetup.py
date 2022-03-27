@@ -155,5 +155,4 @@ def ui_draw(context, layout):
     box = layout.box()
     box.operator("anime_pose_tools.setup_facerig_from_deform_bones")
     box.operator("anime_pose_tools.remove_facerig_by_prefix")
-    # box.operator("anime_pose_tools.remove_facerig_control_bones")
 
