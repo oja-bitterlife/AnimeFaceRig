@@ -51,11 +51,11 @@ class ANIME_POSE_TOOLS_OT_show_all(bpy.types.Operator):
         return {'FINISHED'}
 
 
-# Reset All
+# Show All Layers
 # =================================================================================================
-class ANIME_POSE_TOOLS_OT_reset_all(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.reset_all"
-    bl_label = "Reset All Layers"
+class ANIME_POSE_TOOLS_OT_show_all_layers(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.show_all_layers"
+    bl_label = "Show All Layers"
 
     # execute
     def execute(self, context):
@@ -74,21 +74,16 @@ class ANIME_POSE_TOOLS_OT_reset_all(bpy.types.Operator):
         for pose_bone in armature.pose.bones:
             pose_bone.bone.hide = False
 
-        # 全ポーズのクリア
-        bpy.ops.pose.select_all(action='SELECT')
-        bpy.ops.pose.transforms_clear()
-        bpy.ops.pose.select_all(action='DESELECT')
-
         return {'FINISHED'}
 
 
 # UI描画設定
 # =================================================================================================
 def ui_draw(context, layout):
-    layout.label(text="Select Util:")
+    layout.label(text="Show Util:")
 
     box = layout.box()
     box.operator("anime_pose_tools.show_deform_only")
     box.operator("anime_pose_tools.show_control_only")
     box.operator("anime_pose_tools.show_all")
-    box.operator("anime_pose_tools.reset_all")
+    box.operator("anime_pose_tools.show_all_layers")
