@@ -12,11 +12,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 bl_info = {
-    "name" : "AnimeFaceRig",
+    "name" : "AnimePoseTools",
     "author" : "oja",
     "description" : "",
     "blender" : (3, 0, 0),
-    "version" : (0, 0, 1),
+    "version" : (0, 0, 2),
     "location" : "",
     "warning" : "",
     "category" : "Generic"

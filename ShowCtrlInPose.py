@@ -3,8 +3,8 @@ import bpy
 
 # Show Only Deform Bones
 # =================================================================================================
-class ANIME_FACE_RIG_OT_show_deform_only(bpy.types.Operator):
-    bl_idname = "anime_face_rig.show_deform_only"
+class ANIME_POSE_TOOLS_OT_show_deform_only(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.show_deform_only"
     bl_label = "Show Deform Only"
 
     # execute
@@ -20,8 +20,8 @@ class ANIME_FACE_RIG_OT_show_deform_only(bpy.types.Operator):
 
 # Show Only Control Bones
 # =================================================================================================
-class ANIME_FACE_RIG_OT_show_control_only(bpy.types.Operator):
-    bl_idname = "anime_face_rig.show_control_only"
+class ANIME_POSE_TOOLS_OT_show_control_only(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.show_control_only"
     bl_label = "Show Control Only"
 
     # execute
@@ -37,8 +37,8 @@ class ANIME_FACE_RIG_OT_show_control_only(bpy.types.Operator):
 
 # Show All
 # =================================================================================================
-class ANIME_FACE_RIG_OT_show_all(bpy.types.Operator):
-    bl_idname = "anime_face_rig.show_all"
+class ANIME_POSE_TOOLS_OT_show_all(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.show_all"
     bl_label = "Show All"
 
     # execute
@@ -53,9 +53,9 @@ class ANIME_FACE_RIG_OT_show_all(bpy.types.Operator):
 
 # Reset All
 # =================================================================================================
-class ANIME_FACE_RIG_OT_reset_all(bpy.types.Operator):
-    bl_idname = "anime_face_rig.reset_all"
-    bl_label = "Reset All"
+class ANIME_POSE_TOOLS_OT_reset_all(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.reset_all"
+    bl_label = "Reset All Layers"
 
     # execute
     def execute(self, context):
@@ -80,8 +80,11 @@ class ANIME_FACE_RIG_OT_reset_all(bpy.types.Operator):
 # =================================================================================================
 def ui_draw(context, layout):
     # 選択中BoneにControll用Boneを生やす
-    layout.label(text="Face Rig Edit Support:")
-    layout.operator("anime_face_rig.show_deform_only")
-    layout.operator("anime_face_rig.show_control_only")
-    layout.operator("anime_face_rig.show_all")
-    layout.operator("anime_face_rig.reset_all")
+    layout.label(text="Select Util:")
+
+    # box = layout.box()
+    # box.label(text="")
+    layout.operator("anime_pose_tools.show_deform_only")
+    layout.operator("anime_pose_tools.show_control_only")
+    layout.operator("anime_pose_tools.show_all")
+    layout.operator("anime_pose_tools.reset_all")

@@ -1,14 +1,14 @@
 import bpy, mathutils
 from . import ResetStretch
 
-AFR_CONTROL_BONE_PREFIX = "AFR_ctrl_"
+APT_FR_CONTROL_BONE_PREFIX = "APT_FR_ctrl_"
 
 
 # 選択中のBoneのRollを設定する
 # =================================================================================================
-class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
-    bl_idname = "anime_face_rig.setup_from_deform_bones"
-    bl_label = "Setup From Deform Bones"
+class ANIME_POSE_TOOLS_OT_setup_facerig_from_deform_bones(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.setup_facerig_from_deform_bones"
+    bl_label = "Setup FaceRig From Deform Bones"
 
     # execute
     def execute(self, context):
@@ -84,7 +84,7 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
 
     # ControlBoneを生やす
     def create_ctrl_bone(self, armature, base_name, point, ctrl_bone_size=1.0):
-        ctrl_bone = armature.data.edit_bones.new(AFR_CONTROL_BONE_PREFIX + base_name)
+        ctrl_bone = armature.data.edit_bones.new(APT_FR_CONTROL_BONE_PREFIX + base_name)
         ctrl_bone.use_connect = False
         ctrl_bone.use_deform = False
         ctrl_bone.head = point
@@ -99,19 +99,19 @@ class ANIME_HAIR_TOOLS_OT_setup_from_deform_bones(bpy.types.Operator):
         damped_track = pose_bone.constraints.new("DAMPED_TRACK")
         damped_track.target = bpy.data.objects[target_armature.name]
         damped_track.subtarget = target_bone.name
-        damped_track.name = AFR_CONTROL_BONE_PREFIX + "DAMPED_TRACK"
+        damped_track.name = APT_FR_CONTROL_BONE_PREFIX + "DAMPED_TRACK"
 
         stretch_to = pose_bone.constraints.new("STRETCH_TO")
         stretch_to.target = bpy.data.objects[target_armature.name]
         stretch_to.subtarget = target_bone.name
-        stretch_to.name = AFR_CONTROL_BONE_PREFIX + "STRETCH_TO"
+        stretch_to.name = APT_FR_CONTROL_BONE_PREFIX + "STRETCH_TO"
 
 
 # ボーン名規約に沿ったボーンを削除する
 # =================================================================================================
-class ANIME_FACE_RIG_OT_remove_from_selected(bpy.types.Operator):
-    bl_idname = "anime_face_rig.remove_by_prefix"
-    bl_label = "Remove From Selected"
+class ANIME_POSE_TOOLS_OT_remove_facerig_from_selected(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.remove_facerig_by_prefix"
+    bl_label = "Remove FaceRig From Selected"
 
     # execute
     def execute(self, context):
@@ -129,13 +129,13 @@ class ANIME_FACE_RIG_OT_remove_from_selected(bpy.types.Operator):
 def remove_from_selected(context, armature, edit_bone_list):
     for bone in edit_bone_list:
         # Prefixチェック
-        if bone.name.startswith(AFR_CONTROL_BONE_PREFIX) and not bone.use_deform:
+        if bone.name.startswith(APT_FR_CONTROL_BONE_PREFIX) and not bone.use_deform:
             armature.data.edit_bones.remove(bone)
             continue
 
         pose_bone = context.object.pose.bones[bone.name]
         for constraint in pose_bone.constraints:
-            if constraint.name.startswith(AFR_CONTROL_BONE_PREFIX):
+            if constraint.name.startswith(APT_FR_CONTROL_BONE_PREFIX):
                 pose_bone.constraints.remove(constraint)
 
 
@@ -153,7 +153,7 @@ def ui_draw(context, layout):
     # 選択中BoneにControll用Boneを生やす
     layout.label(text="Face Rig Setting:")
     box = layout.box()
-    box.operator("anime_face_rig.setup_from_deform_bones")
-    box.operator("anime_face_rig.remove_by_prefix")
-    box.operator("anime_face_rig.remove_control_bones")
+    box.operator("anime_pose_tools.setup_facerig_from_deform_bones")
+    box.operator("anime_pose_tools.remove_facerig_by_prefix")
+    # box.operator("anime_pose_tools.remove_facerig_control_bones")
 

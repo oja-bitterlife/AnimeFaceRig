@@ -3,8 +3,8 @@ from . import FaceRigSetup
 
 # ボーン名規約に沿ったボーンを削除する
 # =================================================================================================
-class ANIME_FACE_RIG_OT_reset_stretchto(bpy.types.Operator):
-    bl_idname = "anime_face_rig.reset_stretchto"
+class ANIME_POSE_TOOLS_OT_reset_facerig_stretchto(bpy.types.Operator):
+    bl_idname = "anime_face_rig.reset_facerig_stretchto"
     bl_label = "Reset StretchTo"
 
     # execute
@@ -21,7 +21,7 @@ class ANIME_FACE_RIG_OT_reset_stretchto(bpy.types.Operator):
             # すべてのコンストレイントをチェック
             for c in pose_bone.constraints:
                 # 名前とタイプが一致したらリセット
-                if c.name.startswith(FaceRigSetup.AFR_CONTROL_BONE_PREFIX) and c.type == "STRETCH_TO":
+                if c.name.startswith(FaceRigSetup.APT_FR_CONTROL_BONE_PREFIX) and c.type == "STRETCH_TO":
                     bpy.ops.constraint.stretchto_reset(constraint=c.name, owner='BONE')
 
         return {'FINISHED'}
@@ -32,4 +32,4 @@ class ANIME_FACE_RIG_OT_reset_stretchto(bpy.types.Operator):
 def ui_draw(context, layout):
     # 選択中BoneにControll用Boneを生やす
     layout.label(text="Face Rig Setting:")
-    layout.operator("anime_face_rig.reset_stretchto")
+    layout.operator("anime_face_rig.reset_facerig_stretchto")
