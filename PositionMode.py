@@ -9,7 +9,7 @@ class ANIME_POSE_TOOLS_OT_to_pose(bpy.types.Operator):
 
     # execute
     def execute(self, context):
-        for obj in bpy.context.selected_objects:
+        for obj in context.selected_objects:
             if obj.type == "ARMATURE":
                 obj.data.pose_position = 'POSE'
 
@@ -24,7 +24,7 @@ class ANIME_POSE_TOOLS_OT_to_rest(bpy.types.Operator):
 
     # execute
     def execute(self, context):
-        for obj in bpy.context.selected_objects:
+        for obj in context.selected_objects:
             if obj.type == "ARMATURE":
                 obj.data.pose_position = 'REST'
 
