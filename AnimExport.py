@@ -150,10 +150,20 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
                 # array_index(x,y,z,w)ごとに処理
                 for array_index_no in data_paths[data_path_name]:
                     array_index = int(array_index_no)  # {0:w 1:x 2:y 3:z} or {0:x 1:y 2:z}
-                    new_action.fcurves.new(data_path=data_path, index=array_index, action_group=bone_name)
+                    new_fcurve = new_action.fcurves.new(data_path=data_path, index=array_index, action_group=bone_name)
 
                     points = data_paths[data_path_name][array_index_no]
                     for point in points:
+                        new_point = new_fcurve.keyframe_points.insert(point["co"][0], point["co"][1], keyframe_type=point["type"])
+                #     "easing": point.easing,
+                #     "handle_left": point.handle_left.to_tuple(),
+                #     "handle_left_type": point.handle_left_type,
+                #     "handle_right": point.handle_right.to_tuple(),
+                #     "handle_right_type": point.handle_right_type,
+                #     "interpolation": point.interpolation,
+                #     "period": point.period,
+                #     "type": point.type,
+
                         print(point["co"])
 
         return {'FINISHED'}
