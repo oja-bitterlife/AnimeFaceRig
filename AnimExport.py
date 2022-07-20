@@ -1,5 +1,5 @@
 import bpy
-import json, traceback
+import json, traceback, re
 
 
 # To Pose Position
@@ -78,13 +78,9 @@ class ANIME_POSE_TOOLS_OT_anim_export(bpy.types.Operator):
             except:
                 continue
 
-            if bone_index not in fcurves:
-                fcurves[bone_index] = {}
-
-            # fcurve設定
-            attribute = fcurve.data_path.split(".")[-1]
-            if attribute not in fcurves[bone_index]:
-                fcurves[bone_index][attribute] = {}
+            replaced_data_path = fcurve.data_path.replace("\"%s\"" % fcurve.group.name, "@%d" % bone_index)
+            if replaced_data_path not in fcurves:
+                fcurves[replaced_data_path] = {}
 
             # point設定
             point_array = []
@@ -101,7 +97,7 @@ class ANIME_POSE_TOOLS_OT_anim_export(bpy.types.Operator):
                     "type": point.type,
                 }
                 point_array.append(point_data)
-            fcurves[bone_index][attribute][fcurve.array_index] = point_array
+            fcurves[replaced_data_path][fcurve.array_index] = point_array
 
         return fcurves
 
@@ -131,7 +127,34 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
             self.report({'ERROR'}, traceback.format_exc())
             return {'CANCELLED'}
 
-        print(data)
+        bones = data["bones"]
+        animation = data["animation"]
+
+        # アクションの作成
+        for action_name in animation:
+            new_action = bpy.data.actions.new(name=action_name)
+
+            # ボーンごとに処理
+            data_paths = animation[action_name]
+            for data_path_name in data_paths:
+                # パス名の分解
+                m = re.match(r'.+\[@(\d+)\]\..+', data_path_name)
+                if not m:
+                    self.report({'ERROR'}, "deta_pathが不正です: %s" % data_path_name)
+                    continue
+
+                # ボーン名,data_path名の取得
+                bone_name = bones[int(m.groups()[0])]
+                data_path = data_path_name.replace("@%s" % m.groups()[0], "\"%s\"" % bone_name)
+
+                # array_index(x,y,z,w)ごとに処理
+                for array_index_no in data_paths[data_path_name]:
+                    array_index = int(array_index_no)  # {0:w 1:x 2:y 3:z} or {0:x 1:y 2:z}
+                    new_action.fcurves.new(data_path=data_path, index=array_index, action_group=bone_name)
+
+                    points = data_paths[data_path_name][array_index_no]
+                    for point in points:
+                        print(point["co"])
 
         return {'FINISHED'}
 
