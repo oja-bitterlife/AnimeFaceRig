@@ -29,7 +29,7 @@ class ANIME_POSE_TOOLS_OT_anim_export(bpy.types.Operator):
             self.filepath += ".json"
 
         data = {}
-        data["bones"] = ["Bone", "Bone.001", "Bone.002", "Bone.003"]
+        data["bones"] = [bone.name for bone in armature.pose.bones]
         data["animation"] = self.get_animation_data(data["bones"])
 
         try:
