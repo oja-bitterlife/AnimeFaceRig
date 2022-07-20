@@ -2,7 +2,7 @@ import bpy
 
 from . import FaceRigSetup
 from . import ResetStretch, ShowCtrlInPose, SelectedBoneList
-from . import PositionMode, WeightUtil
+from . import PositionMode, WeightUtil, AnimExport
 
 
 # Main UI
@@ -17,8 +17,13 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
     def draw(self, context):
         # 状態によって使うUIを切り替える
         if context.mode == "OBJECT":
-            PositionMode.ui_draw(context, self.layout)
-            WeightUtil.ui_draw(context, self.layout)
+            # Aramture選択時
+            if bpy.context.view_layer.objects.active == None or bpy.context.view_layer.objects.active.type == "ARMATURE":
+                PositionMode.ui_draw(context, self.layout)
+                AnimExport.ui_draw(context, self.layout)
+            if bpy.context.view_layer.objects.active == None or bpy.context.view_layer.objects.active.type == "MESH":
+                WeightUtil.ui_draw(context, self.layout)
+
         if context.mode == "EDIT_ARMATURE":
             FaceRigSetup.ui_draw(context, self.layout)
         if context.mode == "POSE":
