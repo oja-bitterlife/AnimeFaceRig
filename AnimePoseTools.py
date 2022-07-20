@@ -18,10 +18,10 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
         # 状態によって使うUIを切り替える
         if context.mode == "OBJECT":
             # Aramture選択時
-            if bpy.context.view_layer.objects.active == None or bpy.context.view_layer.objects.active.type == "ARMATURE":
+            if bpy.context.view_layer.objects.active.type == "ARMATURE":
                 PositionMode.ui_draw(context, self.layout)
                 AnimExport.ui_draw(context, self.layout)
-            if bpy.context.view_layer.objects.active == None or bpy.context.view_layer.objects.active.type == "MESH":
+            if bpy.context.view_layer.objects.active.type == "MESH":
                 WeightUtil.ui_draw(context, self.layout)
 
         if context.mode == "EDIT_ARMATURE":
