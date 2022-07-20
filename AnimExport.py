@@ -29,7 +29,7 @@ class ANIME_POSE_TOOLS_OT_anim_export(bpy.types.Operator):
             self.filepath += ".json"
 
         data = {}
-        data["bones"] = [bone.name for bone in armature.pose.bones]
+        data["bones"] = self.get_animation_bones([bone.name for bone in armature.pose.bones])
         data["animation"] = self.get_animation_data(data["bones"])
 
         try:
@@ -42,6 +42,21 @@ class ANIME_POSE_TOOLS_OT_anim_export(bpy.types.Operator):
 
         return {'FINISHED'}
 
+
+    # Actionで使われているBoneのみ拾う
+    def get_animation_bones(self, all_bones):
+        use_bones = []
+        for action in bpy.data.actions:
+            for fcurve in action.fcurves:
+                if fcurve.group.name in use_bones:
+                    continue  # 登録済み
+                # ActiveなArmatureのみ対象
+                if fcurve.group.name in all_bones:
+                    use_bones.append(fcurve.group.name)
+        return use_bones
+
+
+    # アニメーションデータを全部取得する
     def get_animation_data(self, bones):
         actions = {}
         for action in bpy.data.actions:
@@ -51,20 +66,9 @@ class ANIME_POSE_TOOLS_OT_anim_export(bpy.types.Operator):
             if action_data:
                 actions[action.name] = action_data
 
-            # # ボーン名と適用対象の取得
-            # match = re.search(r'pose.bones\["(.+?)"\].+?([^.]+$)', fcurve.data_path)
-            # if match:
-            #     bone_name, attribute = match.groups()
-
-            # # ActiveBoneだけ処理
-            # if bone_name == target_bone.name:
-            #     # 回転だけコピー
-            #     if attribute != "rotation_quaternion" and attribute != "rotation_euler" and attribute != "rotation_axis_angle":
-            #         continue
-            #     keyframes["%s:%d" % (attribute, fcurve.array_index)] = fcurve.keyframe_points
-
         return actions
 
+    # アクション１つのデータを取得する
     def get_action_data(self, action, bones):
         fcurves = {}
         for fcurve in action.fcurves:
