@@ -137,6 +137,13 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
         animation = data["animation"]
         target_bones = [bone.name for bone in armature.pose.bones]
 
+        # bone存在チェック
+        for bone_name in bones:
+            if bone_name not in target_bones:
+                self.report({'ERROR'}, "boneが存在しません: %s" % bone_name)
+                continue
+
+
         # アクションの作成
         for action_name in animation:
             new_action = bpy.data.actions.new(name=action_name)
@@ -156,7 +163,6 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
 
                 # bone存在チェック
                 if bone_name not in target_bones:
-                    self.report({'ERROR'}, "boneが存在しません: %s" % bone_name)
                     continue
 
                 # array_index(x,y,z,w)ごとに処理
