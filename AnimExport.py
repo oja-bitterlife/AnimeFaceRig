@@ -120,6 +120,12 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
 
     # execute
     def execute(self, context):
+        armature = bpy.context.view_layer.objects.active
+        if armature.type != "ARMATURE":
+            self.report({'ERROR'}, "activeなオブジェクトがArmatureじゃない(通常あり得ない)")
+            return {'CANCELLED'}
+
+        # JSON読み込み
         try:
             with open(self.filepath, 'r') as f:
                 data = json.load(f)
@@ -129,6 +135,7 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
 
         bones = data["bones"]
         animation = data["animation"]
+        target_bones = [bone.name for bone in armature.pose.bones]
 
         # アクションの作成
         for action_name in animation:
@@ -146,6 +153,11 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
                 # ボーン名,data_path名の取得
                 bone_name = bones[int(m.groups()[0])]
                 data_path = data_path_name.replace("@%s" % m.groups()[0], "\"%s\"" % bone_name)
+
+                # bone存在チェック
+                if bone_name not in target_bones:
+                    self.report({'ERROR'}, "boneが存在しません: %s" % bone_name)
+                    continue
 
                 # array_index(x,y,z,w)ごとに処理
                 for array_index_no in data_paths[data_path_name]:

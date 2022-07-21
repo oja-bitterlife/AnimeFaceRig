@@ -26,6 +26,7 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
 
         if context.mode == "EDIT_ARMATURE":
             FaceRigSetup.ui_draw(context, self.layout)
+
         if context.mode == "POSE":
             ResetStretch.ui_draw(context, self.layout)
             ShowCtrlInPose.ui_draw(context, self.layout)
