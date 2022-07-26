@@ -1,7 +1,7 @@
 import bpy
 
 from . import FaceRigSetup
-from . import ResetStretch, ShowCtrlInPose, SelectedBoneList
+from . import ResetStretch, ShowCtrlInPose, CursorToSelected, SelectedBoneList
 from . import PositionMode, WeightUtil, AnimExport
 
 
@@ -30,5 +30,6 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
         if context.mode == "POSE":
             ResetStretch.ui_draw(context, self.layout)
             ShowCtrlInPose.ui_draw(context, self.layout)
+            CursorToSelected.ui_draw(context, self.layout)
             SelectedBoneList.ui_draw(context, self.layout)
 
