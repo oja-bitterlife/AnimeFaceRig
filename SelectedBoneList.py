@@ -13,8 +13,8 @@ class ANIME_POSE_TOOLS_OT_listup_selected_bones(bpy.types.Operator):
 
         # Aramtureが選択されていない
         if armature == None or armature.type != "ARMATURE":
-            context.scene.output_bones = "Armature is not selected."
-            return{'FINISHED'}
+            self.report({'ERROR'}, "activeなオブジェクトがArmatureじゃない(通常あり得ない)")
+            return {'CANCELLED'}
 
         # 出力初期化
         context.scene.output_bones = "Bone is not selected."
