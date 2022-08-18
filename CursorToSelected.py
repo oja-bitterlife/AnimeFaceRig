@@ -21,7 +21,7 @@ class ANIME_POSE_TOOLS_OT_cursor_to_selected(bpy.types.Operator):
         vec = bone.tail - bone.head
         pos = bone.head + vec * context.scene.target_head_tail_weight
 
-        bpy.context.scene.cursor.location = pos
+        bpy.context.scene.cursor.location = armature.matrix_world @ pos
 
         return{'FINISHED'}
 
