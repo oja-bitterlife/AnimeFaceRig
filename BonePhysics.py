@@ -26,8 +26,8 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
         # 対象ボーンの中央にBoxを配置
         for edit_bone in selected_bones:
             vec = edit_bone.tail - edit_bone.head
-            size = vec.length * context.scene.collision_box_size
-            pos = armature.matrix_world @ (bone.head + vec * 0.5)
+            size = vec.length * context.scene.collision_box_size * 0.5
+            pos = armature.matrix_world @ (edit_bone.head + vec * 0.5)
 
             # 登録先コレクション取得
             collection = bpy.data.collections.get(context.scene.work_collection)
@@ -38,7 +38,7 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
             # Box作成
             mesh = bpy.data.meshes.new("BoxMesh")
             box_verts = [(v[0]*size, v[1]*size, v[2]*size) for v in BOX_VERTS]
-            mesh.from_pydata(BOX_VERTS, [], BOX_FACES)
+            mesh.from_pydata(box_verts, [], BOX_FACES)
             mesh.update(calc_edges=True)
             obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + edit_bone.name, mesh)
             obj.location = pos
@@ -54,6 +54,9 @@ class ANIME_POSE_TOOLS_OT_remove_all(bpy.types.Operator):
 
     # execute
     def execute(self, context):
+        for obj in bpy.data.objects:
+            if obj.name.startswith(COLLISION_BOX_PREFIX):
+                bpy.data.objects.remove(obj)
 
         return{'FINISHED'}
 
