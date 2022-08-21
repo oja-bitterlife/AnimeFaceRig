@@ -1,5 +1,8 @@
 import bpy
+from mathutils import Vector
+
 from .Util import BoneUtil
+
 
 COLLISION_BOX_PREFIX = "APT_ColBox@"
 
@@ -37,7 +40,7 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
 
             # Box作成
             mesh = bpy.data.meshes.new("BoxMesh")
-            box_verts = [(v[0]*size, v[1]*size, v[2]*size) for v in BOX_VERTS]
+            box_verts = [(armature.matrix_world.to_3x3() @ edit_bone.matrix.to_3x3() @ Vector([v[0]*size, v[1]*size, v[2]*size])).xyz for v in BOX_VERTS]
             mesh.from_pydata(box_verts, [], BOX_FACES)
             mesh.update(calc_edges=True)
             obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + edit_bone.name, mesh)
