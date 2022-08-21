@@ -52,11 +52,18 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
                 bpy.context.scene.collection.children.link(collection)
 
             # Box作成
+            # メッシュの頂点を変換して作成
             mesh = bpy.data.meshes.new("BoxMesh")
             rot_matrix = armature.matrix_world.to_3x3() @ edit_bone.matrix.to_3x3()
-            box_verts = [(rot_matrix @ Vector([v[0]*size, v[1]*size, v[2]*size])).xyz for v in BOX_VERTS]
+            # まずはサイズ調整
+            tmp_verts = [Vector([v[0]*size, v[1]*size, v[2]*size]) for v in BOX_VERTS]
+            # 上下中央はhead/tailの位置まで伸ばす
+            tmp_verts[0].y = tmp_verts[0].y - (vec.length*0.5 - 0.5*size)
+            tmp_verts[1].y = tmp_verts[1].y + (vec.length*0.5 - 0.5*size)
+            box_verts = [(rot_matrix @ v).xyz for v in tmp_verts]  # ボーンの向きで傾ける
             mesh.from_pydata(box_verts, [], BOX_FACES)
             mesh.update(calc_edges=True)
+            # オブジェクトにしてコレクションに登録
             obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + edit_bone.name, mesh)
             obj.location = pos
             collection.objects.link(obj)
