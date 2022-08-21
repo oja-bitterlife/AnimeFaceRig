@@ -1,7 +1,7 @@
 import bpy
 
 
-# Listup Selected Bones
+# Cursor move to selected bone
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_cursor_to_selected(bpy.types.Operator):
     bl_idname = "anime_pose_tools.cursor_to_selected"

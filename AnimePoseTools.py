@@ -1,8 +1,9 @@
 import bpy
 
-from . import FaceRigSetup, SelectBones, SelectedBoneList
-from . import ResetStretch, ShowCtrlInPose, CursorToSelected
 from . import PositionMode, WeightUtil, AnimExport
+from . import FaceRigSetup, BonePhysics
+from . import SelectBones, SelectedBoneList
+from . import ResetStretch, ShowCtrlInPose, CursorToSelected
 
 
 # Main UI
@@ -15,6 +16,10 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
     bl_category = "AnimePoseTools"
 
     def draw(self, context):
+        # 何も選択されていない
+        if bpy.context.view_layer.objects.active == None:
+            return
+
         # 状態によって使うUIを切り替える
         if context.mode == "OBJECT":
             # Aramture選択時
@@ -26,6 +31,7 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
 
         if context.mode == "EDIT_ARMATURE":
             FaceRigSetup.ui_draw(context, self.layout)
+            BonePhysics.ui_draw(context, self.layout)
 
         if context.mode == "POSE":
             ResetStretch.ui_draw(context, self.layout)
