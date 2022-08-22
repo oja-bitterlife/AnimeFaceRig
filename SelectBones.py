@@ -12,11 +12,6 @@ class ANIME_POSE_TOOLS_OT_select_bones_with_a_key(bpy.types.Operator):
     def execute(self, context):
         armature = bpy.context.view_layer.objects.active
 
-        # Aramtureが選択されていない
-        if armature == None or armature.type != "ARMATURE":
-            self.report({'ERROR'}, "activeなオブジェクトがArmatureじゃない(通常あり得ない)")
-            return {'CANCELLED'}
-
         # 選択中ArmatureのBone名を取得
         bone_names = [bone.name for bone in armature.pose.bones]
 

@@ -11,11 +11,6 @@ class ANIME_POSE_TOOLS_OT_cursor_to_selected(bpy.types.Operator):
     def execute(self, context):
         armature = bpy.context.view_layer.objects.active
 
-        # Aramtureが選択されていない
-        if armature == None or armature.type != "ARMATURE":
-            self.report({'ERROR'}, "activeなオブジェクトがArmatureじゃない(通常あり得ない)")
-            return {'CANCELLED'}
-
         # アクティブなボーンの取得
         bone = context.active_pose_bone
         vec = bone.tail - bone.head

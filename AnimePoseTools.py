@@ -1,8 +1,8 @@
 import bpy
 
-from . import PositionMode, WeightUtil, AnimExport
+from . import ListSelectedBone, PositionMode, WeightUtil, AnimExport
 from . import FaceRigSetup, BonePhysics
-from . import SelectBones, SelectedBoneList
+from . import SelectBones
 from . import ResetStretch, ShowCtrlInPose, CursorToSelected
 
 
@@ -31,12 +31,18 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
 
         if context.mode == "EDIT_ARMATURE":
             FaceRigSetup.ui_draw(context, self.layout)
-            BonePhysics.ui_draw(context, self.layout)
 
         if context.mode == "POSE":
-            ResetStretch.ui_draw(context, self.layout)
+            # Aramtureが選択されていない
+            armature = bpy.context.view_layer.objects.active
+            if armature == None or armature.type != "ARMATURE":
+                self.report({'ERROR'}, "activeなオブジェクトがArmatureじゃない(通常あり得ない)")
+                return {'CANCELLED'}
+
             ShowCtrlInPose.ui_draw(context, self.layout)
             CursorToSelected.ui_draw(context, self.layout)
+            BonePhysics.ui_draw(context, self.layout)
+            ResetStretch.ui_draw(context, self.layout)
             SelectBones.ui_draw(context, self.layout)
-            SelectedBoneList.ui_draw(context, self.layout)
+            ListSelectedBone.ui_draw(context, self.layout)
 

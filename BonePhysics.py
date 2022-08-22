@@ -68,10 +68,11 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
             obj.location = pos
             collection.objects.link(obj)
 
-
-
         return{'FINISHED'}
 
+
+# Remove Physics setup
+# =================================================================================================
 class ANIME_POSE_TOOLS_OT_remove_all(bpy.types.Operator):
     bl_idname = "anime_pose_tools.remove_all"
     bl_label = "Remove All"
@@ -85,10 +86,42 @@ class ANIME_POSE_TOOLS_OT_remove_all(bpy.types.Operator):
         return{'FINISHED'}
 
 
+# Check Overlaped bones
+# =================================================================================================
+class ANIME_POSE_TOOLS_OT_check_overlap(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.check_overlap"
+    bl_label = "Check Overlaped "
+
+    # execute
+    def execute(self, context):
+        # 対象ボーンの回収
+        armature = bpy.context.active_object
+        selected_bones = []
+        for bone in armature.data.edit_bones:
+            if bone.select and BoneUtil.is_layer_enable(armature, bone):
+                selected_bones.append(bone)
+                bone.select = False  # 一旦非選択に
+
+        # チェック
+        for check_bone in selected_bones:
+            for cmp_bone in selected_bones:
+                # 自身はチェックしない
+                if check_bone.name == cmp_bone.name:
+                    continue
+                # 同一の親ならHeadが一致するのは当然なのでチェックしない
+                if check_bone.parent.name == cmp_bone.parent.name:
+                    continue
+
+
+        return{'FINISHED'}
+
+
+
 # UI描画設定
 # =================================================================================================
 def ui_draw(context, layout):
     layout.label(text="Bone Physics:")
+    layout.operator("anime_pose_tools.check_overlap")
     box = layout.box()
     box.prop(context.scene, "work_collection", text="Work Collection", slider=True)
     create = box.box()
