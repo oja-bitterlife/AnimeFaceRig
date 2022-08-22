@@ -110,7 +110,6 @@ def ui_draw(context, layout):
 
     box = layout.box()
     row = box.row()
-    row.alignment = 'EXPAND'
     row.operator("anime_pose_tools.select_to_edge")
     row.operator("anime_pose_tools.select_to_top")
     row.operator("anime_pose_tools.select_plus_edge")
