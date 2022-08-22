@@ -1,7 +1,7 @@
 import bpy
 from mathutils import Vector
 
-from .Util import BoneUtil
+from .Util import BoneUtil, MeshUtil
 
 
 COLLISION_BOX_PREFIX = "APT_ColBox@"
@@ -33,10 +33,11 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
     def execute(self, context):
         # 対象ボーンの回収
         armature = bpy.context.view_layer.objects.active
+        selected_pose_bones = bpy.context.selected_pose_bones[:]
 
         # 対象ボーンの中央にBoxを配置
         objs = []
-        for pose_bone in bpy.context.selected_pose_bones:
+        for pose_bone in selected_pose_bones:
             vec = pose_bone.tail - pose_bone.head
             col_width = vec.length * context.scene.collision_box_width
             col_length = vec.length * context.scene.collision_box_length
@@ -67,22 +68,55 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
 
             objs.append(obj)
 
+        # １つも対象がなかったら終了
+        if len(objs) == 0:
+            return{'FINISHED'}
+
         # メッシュをまとめる
-        if len(objs) > 0:
-            bpy.ops.object.mode_set(mode='OBJECT')
-            bpy.context.view_layer.objects.active = objs[0]
-            bpy.ops.object.select_all(action='DESELECT')
-            for obj in objs:
-                obj.select_set(True)
-            bpy.ops.object.join()
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.context.view_layer.objects.active = objs[0]
+        bpy.ops.object.select_all(action='DESELECT')
+        for obj in objs:
+            obj.select_set(True)
+        bpy.ops.object.join()
 
-            # 頂点のマージ(Clothの場合必須)
-            bpy.ops.object.mode_set(mode='EDIT')
-            bpy.ops.mesh.remove_doubles()
+        # 頂点のマージ(Clothの場合必須)
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.mesh.remove_doubles()
 
+        # 頂点選択解除
+        # bpy.ops.object.mode_set(mode='OBJECT')
+        # MeshUtil.deselect_vertex_in_object_mode(bpy.context.view_layer.objects.active)
+        # bpy.ops.object.mode_set(mode='EDIT')
 
+        # ウェイトの設定
+        self.set_weight(bpy.context.edit_object, armature, selected_pose_bones)
 
         return{'FINISHED'}
+
+    def set_weight(self, obj, armature, pose_bones):
+        bpy.ops.mesh.select_all(action='DESELECT')
+
+        for pose_bone in pose_bones:
+            # 頂点ウェイトの作成
+            vg = obj.vertex_groups.new(name=pose_bone.bone.name)
+
+            # ボーンの先端に近い頂点を探してウェイトを1に
+            pos = armature.matrix_world @ pose_bone.tail
+            v = self.find_nearlest_vertex(obj, pos)
+            if v != None:
+                vg.add([v.index], 1, "ADD")
+
+    # objの持つ頂点の中でposに一番近い頂点を探す
+    def find_nearlest_vertex(self, obj, pos):
+        nearlest_vert = None
+        nearlest_len = 1
+        for v in obj.data.vertices:
+            length = (v.co - pos).length
+            if length < nearlest_len:
+                nearlest_vert = v
+                nearlest_len = length
+        return nearlest_vert
 
 
 # Remove Physics setup
