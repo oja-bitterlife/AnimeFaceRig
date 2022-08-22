@@ -5,7 +5,7 @@ import bpy
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_show_deform_only(bpy.types.Operator):
     bl_idname = "anime_pose_tools.show_deform_only"
-    bl_label = "Show Deform Only"
+    bl_label = "Deform"
 
     # execute
     def execute(self, context):
@@ -22,7 +22,7 @@ class ANIME_POSE_TOOLS_OT_show_deform_only(bpy.types.Operator):
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_show_control_only(bpy.types.Operator):
     bl_idname = "anime_pose_tools.show_control_only"
-    bl_label = "Show Control Only"
+    bl_label = "Control"
 
     # execute
     def execute(self, context):
@@ -39,7 +39,7 @@ class ANIME_POSE_TOOLS_OT_show_control_only(bpy.types.Operator):
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_show_all(bpy.types.Operator):
     bl_idname = "anime_pose_tools.show_all"
-    bl_label = "Show All"
+    bl_label = "All"
 
     # execute
     def execute(self, context):
@@ -83,7 +83,9 @@ def ui_draw(context, layout):
     layout.label(text="Show Util:")
 
     box = layout.box()
-    box.operator("anime_pose_tools.show_deform_only")
-    box.operator("anime_pose_tools.show_control_only")
-    box.operator("anime_pose_tools.show_all")
+    row = box.row()
+    row.alignment = 'EXPAND'
+    row.operator("anime_pose_tools.show_deform_only")
+    row.operator("anime_pose_tools.show_control_only")
+    row.operator("anime_pose_tools.show_all")
     box.operator("anime_pose_tools.show_all_layers")

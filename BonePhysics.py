@@ -126,7 +126,8 @@ def ui_draw(context, layout):
     box.prop(context.scene, "work_collection", text="Work Collection", slider=True)
     create = box.box()
     create.label(text="Collistion Box:")
-    create.prop(context.scene, "collision_box_size", text="Collision Size", slider=True)
+    create.prop(context.scene, "collision_box_width", text="Collision Width", slider=True)
+    create.prop(context.scene, "collision_box_length", text="Collision Length", slider=True)
     create.operator("anime_pose_tools.create_collision_box")
     box.operator("anime_pose_tools.remove_all")
 
@@ -134,4 +135,5 @@ def ui_draw(context, layout):
 # =================================================================================================
 def register():
     bpy.types.Scene.work_collection = bpy.props.StringProperty(name="Work Collection Name", default="APT_Work")
-    bpy.types.Scene.collision_box_size = bpy.props.FloatProperty(name="Collision Box Size", min=0, max=1, default=0.5)
+    bpy.types.Scene.collision_box_width = bpy.props.FloatProperty(name="Collision Box Width", min=0, max=1, default=0.5)
+    bpy.types.Scene.collision_box_length = bpy.props.FloatProperty(name="Collision Box Length", min=0, max=1, default=0.8)
