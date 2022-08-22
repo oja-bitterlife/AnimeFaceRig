@@ -1,6 +1,6 @@
 import bpy
 
-from . import ListSelectedBone, PositionMode, WeightUtil, AnimExport
+from . import ListupSelectedBones, PositionMode, WeightUtil, AnimExport
 from . import FaceRigSetup, BonePhysics
 from . import SelectBones
 from . import ResetStretch, ShowCtrlInPose, CursorToSelected
@@ -44,5 +44,5 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             BonePhysics.ui_draw(context, self.layout)
             ResetStretch.ui_draw(context, self.layout)
             SelectBones.ui_draw(context, self.layout)
-            ListSelectedBone.ui_draw(context, self.layout)
+            ListupSelectedBones.ui_draw(context, self.layout)
 

@@ -33,17 +33,13 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
     def execute(self, context):
         # 対象ボーンの回収
         armature = bpy.context.active_object
-        selected_bones = []
-        for bone in armature.data.edit_bones:
-            if bone.select and BoneUtil.is_layer_enable(armature, bone):
-                selected_bones.append(bone)
-
 
         # 対象ボーンの中央にBoxを配置
-        for edit_bone in selected_bones:
-            vec = edit_bone.tail - edit_bone.head
-            size = vec.length * context.scene.collision_box_size * 0.5
-            pos = armature.matrix_world @ (edit_bone.head + vec * 0.5)
+        for pose_bone in bpy.context.selected_pose_bones:
+            vec = pose_bone.tail - pose_bone.head
+            col_width = vec.length * context.scene.collision_box_width
+            col_length = vec.length * context.scene.collision_box_length
+            pos = armature.matrix_world @ (pose_bone.head + vec * 0.5)
 
             # 登録先コレクション取得
             collection = bpy.data.collections.get(context.scene.work_collection)
@@ -54,17 +50,17 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
             # Box作成
             # メッシュの頂点を変換して作成
             mesh = bpy.data.meshes.new("BoxMesh")
-            rot_matrix = armature.matrix_world.to_3x3() @ edit_bone.matrix.to_3x3()
+            rot_matrix = armature.matrix_world.to_3x3() @ pose_bone.matrix.to_3x3()
             # まずはサイズ調整
-            tmp_verts = [Vector([v[0]*size, v[1]*size, v[2]*size]) for v in BOX_VERTS]
+            tmp_verts = [Vector([v[0]*col_width, v[1]*col_length, v[2]*col_width]) for v in BOX_VERTS]
             # 上下中央はhead/tailの位置まで伸ばす
-            tmp_verts[0].y = tmp_verts[0].y - (vec.length*0.5 - 0.5*size)
-            tmp_verts[1].y = tmp_verts[1].y + (vec.length*0.5 - 0.5*size)
+            tmp_verts[0].y = tmp_verts[0].y - (vec.length - col_length) * 0.5
+            tmp_verts[1].y = tmp_verts[1].y + (vec.length - col_length) * 0.5
             box_verts = [(rot_matrix @ v).xyz for v in tmp_verts]  # ボーンの向きで傾ける
             mesh.from_pydata(box_verts, [], BOX_FACES)
             mesh.update(calc_edges=True)
             # オブジェクトにしてコレクションに登録
-            obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + edit_bone.name, mesh)
+            obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + pose_bone.name, mesh)
             obj.location = pos
             collection.objects.link(obj)
 
@@ -135,5 +131,5 @@ def ui_draw(context, layout):
 # =================================================================================================
 def register():
     bpy.types.Scene.work_collection = bpy.props.StringProperty(name="Work Collection Name", default="APT_Work")
-    bpy.types.Scene.collision_box_width = bpy.props.FloatProperty(name="Collision Box Width", min=0, max=1, default=0.5)
-    bpy.types.Scene.collision_box_length = bpy.props.FloatProperty(name="Collision Box Length", min=0, max=1, default=0.8)
+    bpy.types.Scene.collision_box_width = bpy.props.FloatProperty(name="Collision Box Width", min=0, max=1, default=0.25)
+    bpy.types.Scene.collision_box_length = bpy.props.FloatProperty(name="Collision Box Length", min=0, max=1, default=0.5)
