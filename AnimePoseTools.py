@@ -25,6 +25,7 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             # Aramture選択時
             if bpy.context.view_layer.objects.active.type == "ARMATURE":
                 PositionMode.ui_draw(context, self.layout)
+                self.layout.separator()
                 AnimExport.ui_draw(context, self.layout)
             if bpy.context.view_layer.objects.active.type == "MESH":
                 WeightUtil.ui_draw(context, self.layout)
@@ -40,9 +41,14 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
                 return {'CANCELLED'}
 
             ShowCtrlInPose.ui_draw(context, self.layout)
+            self.layout.separator()
             CursorToSelected.ui_draw(context, self.layout)
+            self.layout.separator()
             BonePhysics.ui_draw(context, self.layout)
+            self.layout.separator()
             ResetStretch.ui_draw(context, self.layout)
+            self.layout.separator()
             SelectBones.ui_draw(context, self.layout)
+            self.layout.separator()
             ListupSelectedBones.ui_draw(context, self.layout)
 

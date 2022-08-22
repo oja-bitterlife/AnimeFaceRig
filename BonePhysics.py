@@ -86,12 +86,15 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.remove_doubles()
         bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.transform_apply()
 
-        # 頂点選択解除
-        # bpy.ops.object.mode_set(mode='OBJECT')
-        # MeshUtil.deselect_vertex_in_object_mode(bpy.context.view_layer.objects.active)
-        # bpy.ops.object.mode_set(mode='EDIT')
+        # オブジェクトに対する設定
+        bpy.ops.object.transform_apply()
+        bpy.context.object.hide_render = True
+
+        # モディファイア(Cloth)設定
+        pin = bpy.context.view_layer.objects.active.vertex_groups.new(name="Pin")
+        bpy.ops.object.modifier_add(type='CLOTH')
+        bpy.context.object.modifiers["Cloth"].settings.vertex_group_mass = "Pin"
 
         # ウェイトの設定
         self.set_weight(bpy.context.view_layer.objects.active, armature, selected_pose_bones)
@@ -161,14 +164,19 @@ class ANIME_POSE_TOOLS_OT_ik_setup(bpy.types.Operator):
             self.report({'ERROR'}, "Target mesh is not set.")
             return {'CANCELLED'}
 
-        armature = bpy.context.view_layer.objects.active
+        # 二重登録しないように
+        for pose_bone in bpy.context.selected_pose_bones:
+            for const in pose_bone.constraints:
+                if const.name.startswith(IK_PREFIX):
+                    pose_bone.constraints.remove(const)
+
+        # IK追加
         for pose_bone in bpy.context.selected_pose_bones:
             const = pose_bone.constraints.new('IK')
             const.name = IK_PREFIX
             const.target = context.scene.ik_target_mesh
             const.subtarget = pose_bone.bone.name
             const.chain_count = 1
-            # print(dir(const))
 
         return{'FINISHED'}
 
