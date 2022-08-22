@@ -83,6 +83,8 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
         # 頂点のマージ(Clothの場合必須)
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.remove_doubles()
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.object.transform_apply()
 
         # 頂点選択解除
         # bpy.ops.object.mode_set(mode='OBJECT')
@@ -90,14 +92,12 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
         # bpy.ops.object.mode_set(mode='EDIT')
 
         # ウェイトの設定
-        self.set_weight(bpy.context.edit_object, armature, selected_pose_bones)
+        self.set_weight(bpy.context.view_layer.objects.active, armature, selected_pose_bones)
 
         return{'FINISHED'}
 
-    def set_weight(self, obj, armature, pose_bones):
-        bpy.ops.mesh.select_all(action='DESELECT')
-
-        for pose_bone in pose_bones:
+    def set_weight(self, obj, armature, selected_pose_bones):
+        for pose_bone in selected_pose_bones:
             # 頂点ウェイトの作成
             vg = obj.vertex_groups.new(name=pose_bone.bone.name)
 
