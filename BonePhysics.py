@@ -75,9 +75,17 @@ class ANIME_POSE_TOOLS_OT_remove_all(bpy.types.Operator):
 
     # execute
     def execute(self, context):
+        # 作業対象コレクションがない
+        collection = bpy.data.collections.get(context.scene.work_collection)
+        if collection == None:
+            return{'FINISHED'}
+
         for obj in bpy.data.objects:
-            if obj.name.startswith(COLLISION_BOX_PREFIX):
-                bpy.data.objects.remove(obj)
+            # 削除するのはWork下だけ
+            if collection.objects.get(obj.name) != None:
+                # COLLISION_BOXの削除
+                if obj.name.startswith(COLLISION_BOX_PREFIX):
+                        bpy.data.objects.remove(obj)
 
         return{'FINISHED'}
 
