@@ -37,7 +37,7 @@ class ANIME_POSE_TOOLS_OT_select_bones_with_a_key(bpy.types.Operator):
         return{'FINISHED'}
 
 
-# Listup Selected Bones
+# Select To Edge
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_select_to_edge(bpy.types.Operator):
     bl_idname = "anime_pose_tools.select_to_edge"
@@ -55,6 +55,7 @@ class ANIME_POSE_TOOLS_OT_select_to_edge(bpy.types.Operator):
             self.rec_select_children(child)
 
 
+# Select To Top
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_select_to_top(bpy.types.Operator):
     bl_idname = "anime_pose_tools.select_to_top"
@@ -72,6 +73,36 @@ class ANIME_POSE_TOOLS_OT_select_to_top(bpy.types.Operator):
             self.rec_select_children(pose_bone.parent)
 
 
+# Select Plus Edge
+# =================================================================================================
+class ANIME_POSE_TOOLS_OT_select_plus_edge(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.select_plus_edge"
+    bl_label = "Plus Edge"
+
+    # execute
+    def execute(self, context):
+        for pose_bone in bpy.context.selected_pose_bones:
+            for child in pose_bone.children:
+                child.bone.select = True
+
+        return{'FINISHED'}
+
+
+# Select Plus Top
+# =================================================================================================
+class ANIME_POSE_TOOLS_OT_select_plus_top(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.select_plus_top"
+    bl_label = "Plus Top"
+
+    # execute
+    def execute(self, context):
+        for pose_bone in bpy.context.selected_pose_bones:
+            if pose_bone.parent:
+                pose_bone.parent.bone.select = True
+
+        return{'FINISHED'}
+
+
 # UI描画設定
 # =================================================================================================
 def ui_draw(context, layout):
@@ -82,4 +113,6 @@ def ui_draw(context, layout):
     row.alignment = 'EXPAND'
     row.operator("anime_pose_tools.select_to_edge")
     row.operator("anime_pose_tools.select_to_top")
+    row.operator("anime_pose_tools.select_plus_edge")
+    row.operator("anime_pose_tools.select_plus_top")
     box.operator("anime_pose_tools.select_bones_with_a_key")
