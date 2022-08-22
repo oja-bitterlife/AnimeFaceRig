@@ -4,8 +4,9 @@ from mathutils import Vector
 from .Util import BoneUtil, MeshUtil
 
 
+DEFAULT_WORK_COLLECTION = "APT_Work"
 COLLISION_BOX_PREFIX = "APT_ColBox@"
-IK_PREFIX = "APT_IK"
+BONE_IK_PREFIX = "APT_IK"
 
 
 # 箱生成用
@@ -46,6 +47,8 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
             pos = armature.matrix_world @ (pose_bone.head + vec * 0.5)
 
             # 登録先コレクション取得
+            if context.scene.work_collection == None or len(context.scene.work_collection) == 0:  # からの場合はデフォルトで再設定
+                context.scene.work_collection = DEFAULT_WORK_COLLECTION
             collection = bpy.data.collections.get(context.scene.work_collection)
             if collection == None:
                 collection = bpy.data.collections.new(context.scene.work_collection)
@@ -167,13 +170,13 @@ class ANIME_POSE_TOOLS_OT_ik_setup(bpy.types.Operator):
         # 二重登録しないように
         for pose_bone in bpy.context.selected_pose_bones:
             for const in pose_bone.constraints:
-                if const.name.startswith(IK_PREFIX):
+                if const.name.startswith(BONE_IK_PREFIX):
                     pose_bone.constraints.remove(const)
 
         # IK追加
         for pose_bone in bpy.context.selected_pose_bones:
             const = pose_bone.constraints.new('IK')
-            const.name = IK_PREFIX
+            const.name = BONE_IK_PREFIX
             const.target = context.scene.ik_target_mesh
             const.subtarget = pose_bone.bone.name
             const.chain_count = 1
@@ -192,7 +195,7 @@ class ANIME_POSE_TOOLS_OT_ik_remove(bpy.types.Operator):
         # 名前で判断して削除
         for pose_bone in bpy.context.selected_pose_bones:
             for const in pose_bone.constraints:
-                if const.name.startswith(IK_PREFIX):
+                if const.name.startswith(BONE_IK_PREFIX):
                     pose_bone.constraints.remove(const)
 
         return{'FINISHED'}
@@ -223,7 +226,7 @@ def ui_draw(context, layout):
 
 # =================================================================================================
 def register():
-    bpy.types.Scene.work_collection = bpy.props.StringProperty(name="Work Collection Name", default="APT_Work")
+    bpy.types.Scene.work_collection = bpy.props.StringProperty(name="Work Collection Name", default=DEFAULT_WORK_COLLECTION)
     bpy.types.Scene.collision_box_width = bpy.props.FloatProperty(name="Collision Box Width", min=0, max=1, default=0.25)
     bpy.types.Scene.collision_box_height = bpy.props.FloatProperty(name="Collision Box Height", min=0, max=1, default=0.5)
     bpy.types.Scene.ik_target_mesh = bpy.props.PointerProperty(type=bpy.types.Object)
