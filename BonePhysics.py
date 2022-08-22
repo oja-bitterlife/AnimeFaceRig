@@ -25,16 +25,17 @@ BOX_FACES = [(2,3,0,5),(3,4,6,0),(5,0,8,7),(0,6,9,8),  # 上面
 
 # Physics setup to Bone
 # =================================================================================================
-class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.create_collision_box"
-    bl_label = "Create"
+class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.create_collision_mesh"
+    bl_label = "Create Collision Mesh"
 
     # execute
     def execute(self, context):
         # 対象ボーンの回収
-        armature = bpy.context.active_object
+        armature = bpy.context.view_layer.objects.active
 
         # 対象ボーンの中央にBoxを配置
+        objs = []
         for pose_bone in bpy.context.selected_pose_bones:
             vec = pose_bone.tail - pose_bone.head
             col_width = vec.length * context.scene.collision_box_width
@@ -63,6 +64,23 @@ class ANIME_POSE_TOOLS_OT_create_collision_box(bpy.types.Operator):
             obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + pose_bone.name, mesh)
             obj.location = pos
             collection.objects.link(obj)
+
+            objs.append(obj)
+
+        # メッシュをまとめる
+        if len(objs) > 0:
+            bpy.ops.object.mode_set(mode='OBJECT')
+            bpy.context.view_layer.objects.active = objs[0]
+            bpy.ops.object.select_all(action='DESELECT')
+            for obj in objs:
+                obj.select_set(True)
+            bpy.ops.object.join()
+
+            # 頂点のマージ(Clothの場合必須)
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.mesh.remove_doubles()
+
+
 
         return{'FINISHED'}
 
@@ -132,7 +150,7 @@ def ui_draw(context, layout):
     create.label(text="Collistion Box:")
     create.prop(context.scene, "collision_box_width", text="Collision Width", slider=True)
     create.prop(context.scene, "collision_box_length", text="Collision Length", slider=True)
-    create.operator("anime_pose_tools.create_collision_box")
+    create.operator("anime_pose_tools.create_collision_mesh")
     box.operator("anime_pose_tools.remove_all")
 
 
