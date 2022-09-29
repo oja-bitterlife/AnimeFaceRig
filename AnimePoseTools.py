@@ -1,9 +1,9 @@
 import bpy
 
 from . import ListupSelectedBones, PositionMode, WeightUtil, AnimExport
-from . import FaceRigSetup, BonePhysics
+from . import BonePhysics
 from . import SelectBones
-from . import ResetStretch, ShowCtrlInPose, CursorToSelected
+from . import ShowCtrlInPose, CursorToSelected
 
 
 # Main UI
@@ -30,9 +30,6 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             if bpy.context.view_layer.objects.active.type == "MESH":
                 WeightUtil.ui_draw(context, self.layout)
 
-        if context.mode == "EDIT_ARMATURE":
-            FaceRigSetup.ui_draw(context, self.layout)
-
         if context.mode == "POSE":
             # Aramtureが選択されていない
             armature = bpy.context.view_layer.objects.active
@@ -45,8 +42,6 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             CursorToSelected.ui_draw(context, self.layout)
             self.layout.separator()
             BonePhysics.ui_draw(context, self.layout)
-            self.layout.separator()
-            ResetStretch.ui_draw(context, self.layout)
             self.layout.separator()
             SelectBones.ui_draw(context, self.layout)
             self.layout.separator()
