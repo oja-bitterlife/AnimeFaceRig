@@ -3,7 +3,7 @@ import bpy
 from . import ListupSelectedBones, PositionMode, WeightUtil, AnimExport
 from . import BonePhysics
 from . import SelectBones
-from . import ShowCtrlInPose, CursorToSelected
+from . import ShowCtrlInPose, CursorToSelected, RemoveKeys
 
 
 # Main UI
@@ -44,6 +44,8 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             BonePhysics.ui_draw(context, self.layout)
             self.layout.separator()
             SelectBones.ui_draw(context, self.layout)
+            self.layout.separator()
+            RemoveKeys.ui_draw(context, self.layout)
             self.layout.separator()
             ListupSelectedBones.ui_draw(context, self.layout)
 
