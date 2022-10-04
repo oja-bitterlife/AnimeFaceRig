@@ -1,4 +1,5 @@
 import bpy
+import re
 
 
 # Listup Selected Bones
@@ -9,6 +10,7 @@ class ANIME_POSE_TOOLS_OT_remove_loc_keys(bpy.types.Operator):
 
     # execute
     def execute(self, context):
+        delete_keyframes(context, ["location"])
         return{'FINISHED'}
 
 class ANIME_POSE_TOOLS_OT_remove_rot_keys(bpy.types.Operator):
@@ -17,6 +19,7 @@ class ANIME_POSE_TOOLS_OT_remove_rot_keys(bpy.types.Operator):
 
     # execute
     def execute(self, context):
+        delete_keyframes(context, ["rotation_quaternion", "rotation_euler", "rotation_axis_angle"])
         return{'FINISHED'}
 
 class ANIME_POSE_TOOLS_OT_remove_scale_keys(bpy.types.Operator):
@@ -25,6 +28,7 @@ class ANIME_POSE_TOOLS_OT_remove_scale_keys(bpy.types.Operator):
 
     # execute
     def execute(self, context):
+        delete_keyframes(context, ["scale"])
         return{'FINISHED'}
 
 class ANIME_POSE_TOOLS_OT_remove_other_keys(bpy.types.Operator):
@@ -33,8 +37,29 @@ class ANIME_POSE_TOOLS_OT_remove_other_keys(bpy.types.Operator):
 
     # execute
     def execute(self, context):
+        delete_keyframes(context, ["bbone_curveinx", "bbone_curveoutx", "bbone_curveinz", "bbone_curveoutz", "bbone_rollin", "bbone_rollout", "bbone_scalein", "bbone_scaleout", "bbone_easein", "bbone_easeout"])
         return{'FINISHED'}
 
+
+# キーフレームを全部削除する
+# targets: キーフレームを削除するチャンネルを指定する
+def delete_keyframes(context, targets):
+    # 現在のActionを取得
+    action = context.active_object.animation_data.action
+    children_dict = {bone.name: bone for bone in context.selected_pose_bones}
+
+    # 子Boneからキーフレームを削除する
+    for fcurve in action.fcurves:
+        # ボーン名と適用対象の取得
+        match = re.search(r'pose.bones\["(.+?)"\].+?([^.]+$)', fcurve.data_path)
+        if match:
+            bone_name, target = match.groups()
+
+            # 子のBoneだけ処理
+            if bone_name in children_dict:
+                # キーを削除
+                if target in targets:
+                    action.fcurves.remove(fcurve)
 
 
 # UI描画設定
