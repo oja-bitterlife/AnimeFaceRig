@@ -33,7 +33,7 @@ class ANIME_POSE_TOOLS_OT_remove_scale_keys(bpy.types.Operator):
 
 class ANIME_POSE_TOOLS_OT_remove_other_keys(bpy.types.Operator):
     bl_idname = "anime_pose_tools.remove_other_keys"
-    bl_label = "Other"
+    bl_label = "BBone"
 
     # execute
     def execute(self, context):
@@ -46,6 +46,9 @@ class ANIME_POSE_TOOLS_OT_remove_other_keys(bpy.types.Operator):
 def delete_keyframes(context, targets):
     # 現在のActionを取得
     action = context.active_object.animation_data.action
+    if not action:
+        return  # Actionが未登録(キーも何もない)
+
     children_dict = {bone.name: bone for bone in context.selected_pose_bones}
 
     # 子Boneからキーフレームを削除する
