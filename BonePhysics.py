@@ -115,12 +115,12 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
 
             # ボーンの先端に近い頂点を探してウェイトを1に
             pos = armature.matrix_world @ pose_bone.tail
-            v = self.find_nearlest_vertex(obj, pos)
+            v = self.find_nearest_vertex(obj, pos)
             if v != None:
                 vg.add([v.index], 1, "ADD")
 
     # objの持つ頂点の中でposに一番近い頂点を探す
-    def find_nearlest_vertex(self, obj, pos):
+    def find_nearest_vertex(self, obj, pos):
         nearlest_vert = None
         nearlest_len = 1
         for v in obj.data.vertices:
