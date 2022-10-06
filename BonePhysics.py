@@ -8,6 +8,8 @@ DEFAULT_WORK_COLLECTION = "APT_Work"
 COLLISION_BOX_PREFIX = "APT_ColBox@"
 BONE_IK_PREFIX = "APT_IK"
 
+MESH_MARGE_THRESHOLD = 0.0005  # 通常のWeldの半分で、CleanUpの5倍
+
 
 # 箱生成用
 BOX_VERTS = [(0,-0.5,0),(0,0.5,0),  # 0-1
@@ -44,7 +46,7 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
             vec = pose_bone.tail - pose_bone.head
             col_width = vec.length * context.scene.collision_box_width
             col_height = vec.length * context.scene.collision_box_height
-            pos = armature.matrix_world @ (pose_bone.head + vec * 0.5)
+            box_center = armature.matrix_world @ ((pose_bone.head + pose_bone.tail) * 0.5)
 
             # 登録先コレクション取得
             if context.scene.work_collection == None or len(context.scene.work_collection) == 0:  # からの場合はデフォルトで再設定
@@ -55,20 +57,25 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
                 bpy.context.scene.collection.children.link(collection)
 
             # Box作成
+            # ---------------------------------------------
             # メッシュの頂点を変換して作成
             mesh = bpy.data.meshes.new("BoxMesh")
-            rot_matrix = armature.matrix_world.to_3x3() @ pose_bone.matrix.to_3x3()
-            # まずはサイズ調整
+            rot_matrix = armature.matrix_world.to_3x3() @ pose_bone.matrix.to_3x3()  # 回転だけ反映
+
+            # まずはBoxのサイズ調整
             tmp_verts = [Vector([v[0]*col_width, v[1]*col_height, v[2]*col_width]) for v in BOX_VERTS]
-            # 上下中央はhead/tailの位置まで伸ばす
-            tmp_verts[0].y = tmp_verts[0].y - (vec.length - col_height) * 0.5
-            tmp_verts[1].y = tmp_verts[1].y + (vec.length - col_height) * 0.5
             box_verts = [(rot_matrix @ v).xyz for v in tmp_verts]  # ボーンの向きで傾ける
+            # 上下中央はhead/tailの位置まで伸ばす
+            box_verts[0] = pose_bone.head - box_center
+            box_verts[1] = pose_bone.tail - box_center
+
+            # Box作成
             mesh.from_pydata(box_verts, [], BOX_FACES)
             mesh.update(calc_edges=True)
+
             # オブジェクトにしてコレクションに登録
             obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + pose_bone.name, mesh)
-            obj.location = pos
+            obj.location = box_center
             collection.objects.link(obj)
 
             objs.append(obj)
@@ -85,14 +92,13 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
             obj.select_set(True)
         bpy.ops.object.join()
 
-        # 頂点のマージ(Clothの場合必須)
-        bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.remove_doubles()
-        bpy.ops.object.mode_set(mode='OBJECT')
-
         # オブジェクトに対する設定
         bpy.ops.object.transform_apply()
         bpy.context.object.hide_render = True
+
+        # 頂点のマージ用Weldモディファイア(Clothの場合必須)
+        bpy.ops.object.modifier_add(type='WELD')
+        bpy.context.object.modifiers["Weld"].merge_threshold = MESH_MARGE_THRESHOLD
 
         # モディファイア(Cloth)設定
         pin = bpy.context.view_layer.objects.active.vertex_groups.new(name="Pin")
