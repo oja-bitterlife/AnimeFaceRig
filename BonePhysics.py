@@ -92,21 +92,24 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
             obj.select_set(True)
         bpy.ops.object.join()
 
+
+        # 頂点のマージ(Clothの場合必須)
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.mesh.remove_doubles(threshold=MESH_MARGE_THRESHOLD)
+        bpy.ops.object.mode_set(mode='OBJECT')
+
         # オブジェクトに対する設定
         bpy.ops.object.transform_apply()
         bpy.context.object.hide_render = True
 
-        # 頂点のマージ用Weldモディファイア(Clothの場合必須)
-        bpy.ops.object.modifier_add(type='WELD')
-        bpy.context.object.modifiers["Weld"].merge_threshold = MESH_MARGE_THRESHOLD
-
         # モディファイア(Cloth)設定
-        pin = bpy.context.view_layer.objects.active.vertex_groups.new(name="Pin")
+        bpy.context.view_layer.objects.active.vertex_groups.new(name="Pin")
         bpy.ops.object.modifier_add(type='CLOTH')
         bpy.context.object.modifiers["Cloth"].settings.vertex_group_mass = "Pin"
-
+        
         # ウェイトの設定
         self.set_weight(bpy.context.view_layer.objects.active, armature, selected_pose_bones)
+        bpy.context.view_layer.objects.active.vertex_groups.active_index = 0  # Pinを選択しなおす
 
         # POSEモードに戻しておく
         bpy.context.view_layer.objects.active = armature
