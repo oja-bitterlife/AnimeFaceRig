@@ -66,8 +66,8 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
             tmp_verts = [Vector([v[0]*col_width, v[1]*col_height, v[2]*col_width]) for v in BOX_VERTS]
             box_verts = [(rot_matrix @ v).xyz for v in tmp_verts]  # ボーンの向きで傾ける
             # 上下中央はhead/tailの位置まで伸ばす
-            box_verts[0] = pose_bone.head - box_center
-            box_verts[1] = pose_bone.tail - box_center
+            box_verts[0] = (armature.matrix_world @ pose_bone.head) - box_center
+            box_verts[1] = (armature.matrix_world @ pose_bone.tail) - box_center
 
             # Box作成
             mesh.from_pydata(box_verts, [], BOX_FACES)
