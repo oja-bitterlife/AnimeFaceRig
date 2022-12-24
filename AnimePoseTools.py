@@ -1,6 +1,7 @@
 import bpy
 
-from . import ListupSelectedBones, PositionMode, WeightUtil, AnimExport
+from . import PositionMode, WeightUtil
+from . import ListupSelectedBones, AnimExport
 from . import BonePhysics
 from . import SelectBones
 from . import ShowCtrlInPose, CursorToSelected, RemoveKeys
