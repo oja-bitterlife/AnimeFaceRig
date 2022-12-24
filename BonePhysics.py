@@ -105,7 +105,10 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
         # モディファイア(Cloth)設定
         bpy.context.view_layer.objects.active.vertex_groups.new(name="Pin")
         bpy.ops.object.modifier_add(type='CLOTH')
-        bpy.context.object.modifiers["Cloth"].settings.vertex_group_mass = "Pin"
+        modifier = bpy.context.object.modifiers["Cloth"]
+        modifier.settings.vertex_group_mass = "Pin"
+        modifier.point_cache.use_disk_cache = True
+        modifier.point_cache.use_library_path = False
         
         # ウェイトの設定
         self.set_weight(bpy.context.view_layer.objects.active, armature, selected_pose_bones)
