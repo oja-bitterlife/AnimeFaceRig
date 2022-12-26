@@ -32,6 +32,23 @@ class ANIME_POSE_TOOLS_OT_disable_cloth(bpy.types.Operator):
 
 # Enable/Disable Cloth IK
 # =================================================================================================
+class ANIME_POSE_TOOLS_OT_select_cloth_ik(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.select_cloth_ik"
+    bl_label = "Select APT_IK Bones"
+
+    # execute
+    def execute(self, context):
+        armature = bpy.context.view_layer.objects.active
+
+        # 選択中ポーズボーンのAPT_IKを有効に
+        for pose_bone in armature.pose.bones:
+            for constraint in pose_bone.constraints:
+                if constraint.name == BonePhysics.BONE_IK_PREFIX:
+                    pose_bone.bone.select = True
+
+        return {'FINISHED'}
+
+
 class ANIME_POSE_TOOLS_OT_enable_cloth_ik(bpy.types.Operator):
     bl_idname = "anime_pose_tools.enable_cloth_ik"
     bl_label = "Enable IK"
@@ -68,15 +85,16 @@ class ANIME_POSE_TOOLS_OT_disable_cloth_ik(bpy.types.Operator):
 # UI描画設定
 # =================================================================================================
 def ui_obj_draw(context, layout):
-    layout.label(text="Cloth Util:")
+    layout.label(text="APT Cloth Util:")
     box = layout.box()
     row = box.row()
     row.operator("anime_pose_tools.enable_cloth_modifire")
     row.operator("anime_pose_tools.disable_cloth_modifire")
 
 def ui_pose_draw(context, layout):
-    layout.label(text="Cloth Util:")
+    layout.label(text="APT Cloth Util:")
     box = layout.box()
+    box.operator("anime_pose_tools.select_cloth_ik")
     row = box.row()
     row.operator("anime_pose_tools.enable_cloth_ik")
     row.operator("anime_pose_tools.disable_cloth_ik")
