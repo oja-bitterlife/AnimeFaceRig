@@ -1,6 +1,6 @@
 import bpy
 
-from . import PositionMode, WeightUtil, PhysicsUtil
+from . import PositionMode, WeightUtil, ClothUtil
 from . import ListupSelectedBones, AnimExport
 from . import BonePhysics
 from . import SelectBones
@@ -30,7 +30,7 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
                 AnimExport.ui_draw(context, self.layout)
             if bpy.context.view_layer.objects.active.type == "MESH":
                 WeightUtil.ui_draw(context, self.layout)
-                PhysicsUtil.ui_draw(context, self.layout)
+                ClothUtil.ui_obj_draw(context, self.layout)
 
         if context.mode == "POSE":
             # Aramtureが選択されていない
@@ -43,11 +43,13 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             self.layout.separator()
             CursorToSelected.ui_draw(context, self.layout)
             self.layout.separator()
-            BonePhysics.ui_draw(context, self.layout)
-            self.layout.separator()
             SelectBones.ui_draw(context, self.layout)
             self.layout.separator()
             RemoveKeys.ui_draw(context, self.layout)
+            self.layout.separator()
+            ClothUtil.ui_pose_draw(context, self.layout)
+            self.layout.separator()
+            BonePhysics.ui_draw(context, self.layout)
             self.layout.separator()
             ListupSelectedBones.ui_draw(context, self.layout)
 
