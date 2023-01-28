@@ -188,6 +188,7 @@ class ANIME_POSE_TOOLS_PT_select_bones(bpy.types.Panel):
     bl_category = "AnimeTools"
     bl_parent_id = "APT_MAIN_UI"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 10
 
     def draw(self, context):
         if context.mode == "POSE":

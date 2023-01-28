@@ -24,6 +24,7 @@ def init():
 
     modules = get_all_submodules(Path(__file__).parent)
     ordered_classes = get_ordered_classes_to_register(modules)
+    ordered_classes = sorted(ordered_classes, key=lambda x: x.bl_order if hasattr(x, "bl_order") else 0)
 
 def register():
     for cls in ordered_classes:

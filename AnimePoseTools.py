@@ -14,6 +14,7 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
     bl_category = "AnimeTools"
     bl_idname = "APT_MAIN_UI"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 0
 
     def draw(self, context):
         # 何も選択されていない
