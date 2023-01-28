@@ -1,9 +1,7 @@
 import bpy
 
 from . import PositionMode, WeightUtil
-from . import AnimExport
-from . import SelectBones
-from . import CursorToSelected, RemoveKeys
+from . import CursorToSelected
 
 
 # Main UI
@@ -27,11 +25,8 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
             # Aramture選択時
             if bpy.context.view_layer.objects.active.type == "ARMATURE":
                 PositionMode.ui_draw(context, self.layout)
-                self.layout.separator()
-                AnimExport.ui_draw(context, self.layout)
             if bpy.context.view_layer.objects.active.type == "MESH":
                 WeightUtil.ui_draw(context, self.layout)
-            #     ClothUtil.ui_obj_draw(context, self.layout)
 
         if context.mode == "POSE":
             # Aramtureが選択されていない
@@ -40,17 +35,5 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
                 self.report({'ERROR'}, "activeなオブジェクトがArmatureじゃない(通常あり得ない)")
                 return {'CANCELLED'}
 
-            # ShowCtrlInPose.ui_draw(context, self.layout)
-            # self.layout.separator()
             CursorToSelected.ui_draw(context, self.layout)
-            # self.layout.separator()
-            # SelectBones.ui_draw(context, self.layout)
-            self.layout.separator()
-            RemoveKeys.ui_draw(context, self.layout)
-            # self.layout.separator()
-            # ClothUtil.ui_pose_draw(context, self.layout)
-            # self.layout.separator()
-            # BonePhysics.ui_draw(context, self.layout)
-            # self.layout.separator()
-            # ListupSelectedBones.ui_draw(context, self.layout)
 
