@@ -1,6 +1,6 @@
 import bpy
 
-from . import PositionMode, WeightUtil
+from . import PositionMode
 from . import CursorToSelected
 
 
@@ -26,8 +26,6 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
             # Aramture選択時
             if bpy.context.view_layer.objects.active.type == "ARMATURE":
                 PositionMode.ui_draw(context, self.layout)
-            if bpy.context.view_layer.objects.active.type == "MESH":
-                WeightUtil.ui_draw(context, self.layout)
 
         if context.mode == "POSE":
             # Aramtureが選択されていない

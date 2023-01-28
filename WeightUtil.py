@@ -58,8 +58,19 @@ class ANIME_POSE_TOOLS_OT_add_groups_from_bones(bpy.types.Operator):
 
 # UI描画設定
 # =================================================================================================
-def ui_draw(context, layout):
-    layout.label(text="Vertex Group Util:")
-    box = layout.box()
-    box.operator("anime_pose_tools.remove_deform")
-    box.operator("anime_pose_tools.add_groups_from_bones")
+class ANIME_POSE_TOOLS_PT_vertex_group_util(bpy.types.Panel):
+    bl_label = "Vertex Group"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "AnimeTools"
+    bl_parent_id = "APT_MAIN_UI"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 50
+
+    def draw(self, context):
+        if context.mode == "OBJECT":
+            self.layout.label(text="add/remove:")
+            box = self.layout.box()
+            box.enabled = bpy.context.view_layer.objects.active.type == "MESH"
+            box.operator("anime_pose_tools.remove_deform")
+            box.operator("anime_pose_tools.add_groups_from_bones")
