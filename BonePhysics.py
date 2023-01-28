@@ -306,7 +306,7 @@ class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
 
     def draw(self, context):
         if context.mode == "POSE":
-            self.layout.label(text="Create Cloth IK:")
+            self.layout.label(text="Setup:")
             box = self.layout.box()
             box.prop(context.scene, "work_collection", text="Work Collection", slider=True)
 
@@ -323,17 +323,18 @@ class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
             ik_op.operator("anime_pose_tools.ik_setup")
             ik_op.operator("anime_pose_tools.ik_remove")
 
-            self.layout.label(text="Cloth Util:")
+            self.layout.label(text="Enable/Disable:")
             box = self.layout.box()
             box.operator("anime_pose_tools.select_cloth_ik")
             row = box.row()
             row.operator("anime_pose_tools.enable_cloth_ik")
             row.operator("anime_pose_tools.disable_cloth_ik")
 
-        if context.mode == "OBJECT" and bpy.context.view_layer.objects.active.type == "MESH":
-            self.layout.label(text="Cloth Util:")
+        if context.mode == "OBJECT":
+            self.layout.label(text="Enable/Disable:")
             box = self.layout.box()
             row = box.row()
+            row.enabled = bpy.context.view_layer.objects.active.type == "MESH"
             row.operator("anime_pose_tools.enable_cloth_modifire")
             row.operator("anime_pose_tools.disable_cloth_modifire")
 

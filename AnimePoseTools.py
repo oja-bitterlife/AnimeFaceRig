@@ -1,10 +1,9 @@
 import bpy
 
 from . import PositionMode, WeightUtil
-from . import ListupSelectedBones, AnimExport
-from . import BonePhysics
+from . import AnimExport
 from . import SelectBones
-from . import ShowCtrlInPose, CursorToSelected, RemoveKeys
+from . import CursorToSelected, RemoveKeys
 
 
 # Main UI
@@ -41,11 +40,11 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
                 self.report({'ERROR'}, "activeなオブジェクトがArmatureじゃない(通常あり得ない)")
                 return {'CANCELLED'}
 
-            ShowCtrlInPose.ui_draw(context, self.layout)
-            self.layout.separator()
+            # ShowCtrlInPose.ui_draw(context, self.layout)
+            # self.layout.separator()
             CursorToSelected.ui_draw(context, self.layout)
-            self.layout.separator()
-            SelectBones.ui_draw(context, self.layout)
+            # self.layout.separator()
+            # SelectBones.ui_draw(context, self.layout)
             self.layout.separator()
             RemoveKeys.ui_draw(context, self.layout)
             # self.layout.separator()

@@ -43,9 +43,10 @@ class ANIME_POSE_TOOLS_PT_listup_selected_bones(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        box = self.layout.box()
-        box.operator("anime_pose_tools.listup_selected_bones")
-        box.prop(context.scene, "output_bones", text="Bone List:")
+        if context.mode == "POSE":
+            box = self.layout.box()
+            box.operator("anime_pose_tools.listup_selected_bones")
+            box.prop(context.scene, "output_bones", text="Bone List:")
 
 
 # =================================================================================================
