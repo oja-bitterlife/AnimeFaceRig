@@ -14,7 +14,7 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
     bl_label = "Anime Pose Tools"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "AnimePoseTools"
+    bl_category = "AnimeTools"
 
     def draw(self, context):
         # 何も選択されていない
