@@ -10,11 +10,12 @@ from . import ShowCtrlInPose, CursorToSelected, RemoveKeys
 # Main UI
 # ===========================================================================================
 # 3DView Tools Panel
-class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
+class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
     bl_label = "Anime Pose Tools"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "AnimeTools"
+    bl_idname = "APT_MAIN_UI"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -51,6 +52,6 @@ class ANIME_FACE_RIG_PT_ui(bpy.types.Panel):
             ClothUtil.ui_pose_draw(context, self.layout)
             self.layout.separator()
             BonePhysics.ui_draw(context, self.layout)
-            self.layout.separator()
-            ListupSelectedBones.ui_draw(context, self.layout)
+            # self.layout.separator()
+            # ListupSelectedBones.ui_draw(context, self.layout)
 

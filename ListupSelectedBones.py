@@ -34,11 +34,19 @@ class ANIME_POSE_TOOLS_OT_listup_selected_bones(bpy.types.Operator):
 
 # UI描画設定
 # =================================================================================================
-def ui_draw(context, layout):
-    layout.label(text="Listup Selected Bones:")
-    box = layout.box()
-    box.operator("anime_pose_tools.listup_selected_bones")
-    box.prop(context.scene, "output_bones", text="Bone List:")
+class ANIME_POSE_TOOLS_PT_listup_selected_bones(bpy.types.Panel):
+    bl_label = "Listup Selected Bones"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "AnimeTools"
+    bl_parent_id = "APT_MAIN_UI"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        box = self.layout.box()
+        box.operator("anime_pose_tools.listup_selected_bones")
+        box.prop(context.scene, "output_bones", text="Bone List:")
+
 
 # =================================================================================================
 def register():
