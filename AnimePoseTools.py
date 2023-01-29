@@ -11,7 +11,7 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
     bl_label = "Anime Pose Tools"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "AnimeTools"
+    bl_category = "Animation"
     bl_idname = "APT_MAIN_UI"
     bl_options = {'DEFAULT_CLOSED'}
     bl_order = 0
