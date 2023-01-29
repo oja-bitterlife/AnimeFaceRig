@@ -213,87 +213,6 @@ class ANIME_POSE_TOOLS_OT_ik_remove(bpy.types.Operator):
         return{'FINISHED'}
 
 
-# Enable/Disable Cloth
-# =================================================================================================
-class ANIME_POSE_TOOLS_OT_enable_cloth(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.enable_cloth_modifire"
-    bl_label = "Enable Cloth"
-
-    # execute
-    def execute(self, context):
-        # 選択中オブジェクトのClothを有効に
-        for obj in context.selected_objects:
-            if obj.type == "MESH":
-                obj.modifiers["Cloth"].show_viewport = True
-                obj.modifiers["Cloth"].show_render = True
-        return {'FINISHED'}
-
-class ANIME_POSE_TOOLS_OT_disable_cloth(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.disable_cloth_modifire"
-    bl_label = "Disable Cloth"
-
-    # execute
-    def execute(self, context):
-        # 選択中オブジェクトのClothを無効に
-        for obj in context.selected_objects:
-            if obj.type == "MESH":
-                obj.modifiers["Cloth"].show_viewport = False
-                obj.modifiers["Cloth"].show_render = False
-        return {'FINISHED'}
-
-
-# Enable/Disable Cloth IK
-# =================================================================================================
-class ANIME_POSE_TOOLS_OT_select_cloth_ik(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.select_cloth_ik"
-    bl_label = "Select APT_IK Bones"
-
-    # execute
-    def execute(self, context):
-        armature = bpy.context.view_layer.objects.active
-
-        # 選択中ポーズボーンのAPT_IKを有効に
-        for pose_bone in armature.pose.bones:
-            for constraint in pose_bone.constraints:
-                if constraint.name == BonePhysics.BONE_IK_PREFIX:
-                    pose_bone.bone.select = True
-
-        return {'FINISHED'}
-
-
-class ANIME_POSE_TOOLS_OT_enable_cloth_ik(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.enable_cloth_ik"
-    bl_label = "Enable IK"
-
-    # execute
-    def execute(self, context):
-        armature = bpy.context.view_layer.objects.active
-
-        # 選択中ポーズボーンのAPT_IKを有効に
-        for pose_bone in armature.pose.bones:
-            if pose_bone.bone.select:
-                for constraint in pose_bone.constraints:
-                    if constraint.name == BonePhysics.BONE_IK_PREFIX:
-                        constraint.enabled = True
-        return {'FINISHED'}
-
-
-class ANIME_POSE_TOOLS_OT_disable_cloth_ik(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.disable_cloth_ik"
-    bl_label = "Disable IK"
-
-    # execute
-    def execute(self, context):
-        armature = bpy.context.view_layer.objects.active
-        # 選択中ポーズボーンのAPT_IKを無効に
-        for pose_bone in armature.pose.bones:
-            if pose_bone.bone.select:
-                for constraint in pose_bone.constraints:
-                    if constraint.name == BonePhysics.BONE_IK_PREFIX:
-                        constraint.enabled = False
-        return {'FINISHED'}
-
-
 # UI描画設定
 # =================================================================================================
 class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
@@ -305,37 +224,23 @@ class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
 
     def draw(self, context):
         if context.mode == "POSE":
-            self.layout.label(text="Setup:")
-            box = self.layout.box()
-            box.prop(context.scene, "work_collection", text="Work Collection", slider=True)
+            self.layout.enabled == False
+        self.layout.label(text="Setup:")
+        box = self.layout.box()
+        box.prop(context.scene, "work_collection", text="Work Collection", slider=True)
 
-            mesh = box.box()
-            mesh.prop(context.scene, "collision_box_width", text="Collision Width", slider=True)
-            mesh.prop(context.scene, "collision_box_height", text="Collision Height", slider=True)
-            mesh_op = mesh.row()
-            mesh_op.operator("anime_pose_tools.create_collision_mesh")
-            mesh_op.operator("anime_pose_tools.remove_mesh")
+        mesh = box.box()
+        mesh.prop(context.scene, "collision_box_width", text="Collision Width", slider=True)
+        mesh.prop(context.scene, "collision_box_height", text="Collision Height", slider=True)
+        mesh_op = mesh.row()
+        mesh_op.operator("anime_pose_tools.create_collision_mesh")
+        mesh_op.operator("anime_pose_tools.remove_mesh")
 
-            ik = box.box()
-            ik.prop(context.scene, "ik_target_mesh", text="IK Target Mesh")
-            ik_op = ik.row()
-            ik_op.operator("anime_pose_tools.ik_setup")
-            ik_op.operator("anime_pose_tools.ik_remove")
-
-            self.layout.label(text="IK Enable/Disable:")
-            box = self.layout.box()
-            box.operator("anime_pose_tools.select_cloth_ik")
-            row = box.row()
-            row.operator("anime_pose_tools.enable_cloth_ik")
-            row.operator("anime_pose_tools.disable_cloth_ik")
-
-        if context.mode == "OBJECT":
-            self.layout.label(text="Cloth Enable/Disable:")
-            box = self.layout.box()
-            row = box.row()
-            row.enabled = bpy.context.view_layer.objects.active.type == "MESH"
-            row.operator("anime_pose_tools.enable_cloth_modifire")
-            row.operator("anime_pose_tools.disable_cloth_modifire")
+        ik = box.box()
+        ik.prop(context.scene, "ik_target_mesh", text="IK Target Mesh")
+        ik_op = ik.row()
+        ik_op.operator("anime_pose_tools.ik_setup")
+        ik_op.operator("anime_pose_tools.ik_remove")
 
 
 # =================================================================================================

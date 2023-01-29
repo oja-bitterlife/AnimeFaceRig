@@ -30,6 +30,7 @@ def init():
     from . import AnimePoseTools
     from . import AnimExport
     from . import BonePhysics
+    from . import BonePhysicsSwitch
     from . import ListupBones
     from . import SelectBones
     from . import WeightUtil
@@ -39,6 +40,7 @@ def init():
         ActionEdit.ANIME_POSE_TOOLS_PT_action_edit,
         WeightUtil.ANIME_POSE_TOOLS_PT_weight_util,
         BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
+        BonePhysicsSwitch.ANIME_POSE_TOOLS_PT_bone_physics_switch,
         AnimExport.ANIME_POSE_TOOLS_PT_anim_export,
         ListupBones.ANIME_POSE_TOOLS_PT_listup_bones,
     ]
