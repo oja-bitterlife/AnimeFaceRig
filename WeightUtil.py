@@ -58,14 +58,13 @@ class ANIME_POSE_TOOLS_OT_add_groups_from_bones(bpy.types.Operator):
 
 # UI描画設定
 # =================================================================================================
-class ANIME_POSE_TOOLS_PT_vertex_group_util(bpy.types.Panel):
+class ANIME_POSE_TOOLS_PT_weight_util(bpy.types.Panel):
     bl_label = "Vertex Group"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "AnimeTools"
-    bl_parent_id = "APT_MAIN_UI"
+    bl_parent_id = "APT_POSE_PT_UI"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_order = 50
 
     def draw(self, context):
         if context.mode == "OBJECT":

@@ -24,7 +24,26 @@ def init():
 
     modules = get_all_submodules(Path(__file__).parent)
     ordered_classes = get_ordered_classes_to_register(modules)
-    ordered_classes = sorted(ordered_classes, key=lambda x: x.bl_order if hasattr(x, "bl_order") else 0)
+
+    # 並び替え
+    from . import ActionUtil
+    from . import AnimePoseTools
+    from . import AnimExport
+    from . import BonePhysics
+    from . import ListupBones
+    from . import SelectBones
+    from . import WeightUtil
+    orders = [
+        AnimePoseTools.ANIME_POSE_TOOLS_PT_ui,
+        SelectBones.ANIME_POSE_TOOLS_PT_select_bones,
+        ActionUtil.ANIME_POSE_TOOLS_PT_action_util,
+        WeightUtil.ANIME_POSE_TOOLS_PT_weight_util,
+        BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
+        AnimExport.ANIME_POSE_TOOLS_PT_anim_export,
+        ListupBones.ANIME_POSE_TOOLS_PT_listup_bones,
+    ]
+    no_ordered = filter(lambda c: c not in orders, ordered_classes)
+    ordered_classes = list(orders) + list(no_ordered)
 
 def register():
     for cls in ordered_classes:
