@@ -185,7 +185,6 @@ class ANIME_POSE_TOOLS_PT_select_bones(bpy.types.Panel):
     bl_label = "Bone Selector"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "AnimeTools"
     bl_parent_id = "APT_POSE_PT_UI"
     bl_options = {'DEFAULT_CLOSED'}
 

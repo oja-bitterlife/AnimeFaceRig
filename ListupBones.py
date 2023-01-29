@@ -38,7 +38,6 @@ class ANIME_POSE_TOOLS_PT_listup_bones(bpy.types.Panel):
     bl_label = "Listup Selected Bones"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "AnimeTools"
     bl_parent_id = "APT_POSE_PT_UI"
     bl_options = {'DEFAULT_CLOSED'}
 
