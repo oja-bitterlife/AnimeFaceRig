@@ -322,7 +322,7 @@ class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
             ik_op.operator("anime_pose_tools.ik_setup")
             ik_op.operator("anime_pose_tools.ik_remove")
 
-            self.layout.label(text="Enable/Disable:")
+            self.layout.label(text="IK Enable/Disable:")
             box = self.layout.box()
             box.operator("anime_pose_tools.select_cloth_ik")
             row = box.row()
@@ -330,7 +330,7 @@ class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
             row.operator("anime_pose_tools.disable_cloth_ik")
 
         if context.mode == "OBJECT":
-            self.layout.label(text="Enable/Disable:")
+            self.layout.label(text="Cloth Enable/Disable:")
             box = self.layout.box()
             row = box.row()
             row.enabled = bpy.context.view_layer.objects.active.type == "MESH"

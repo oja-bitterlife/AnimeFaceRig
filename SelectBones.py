@@ -189,23 +189,25 @@ class ANIME_POSE_TOOLS_PT_select_bones(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        if context.mode == "POSE":
-            self.layout.label(text="Show Control:")
+        if context.mode != "POSE":
+            self.layout.enabled = False
 
-            box = self.layout.box()
-            row = box.row()
-            row.alignment = 'EXPAND'
-            row.operator("anime_pose_tools.show_deform_only")
-            row.operator("anime_pose_tools.show_control_only")
-            row.operator("anime_pose_tools.show_all")
-            box.operator("anime_pose_tools.show_all_layers")
+        self.layout.label(text="Show Control:")
 
-            self.layout.label(text="Select Bones:")
+        box = self.layout.box()
+        row = box.row()
+        row.alignment = 'EXPAND'
+        row.operator("anime_pose_tools.show_deform_only")
+        row.operator("anime_pose_tools.show_control_only")
+        row.operator("anime_pose_tools.show_all")
+        box.operator("anime_pose_tools.show_all_layers")
 
-            box = self.layout.box()
-            row = box.row()
-            row.operator("anime_pose_tools.select_to_edge")
-            row.operator("anime_pose_tools.select_to_top")
-            row.operator("anime_pose_tools.select_plus_edge")
-            row.operator("anime_pose_tools.select_plus_top")
-            box.operator("anime_pose_tools.select_bones_with_a_key")
+        self.layout.label(text="Select Bones:")
+
+        box = self.layout.box()
+        row = box.row()
+        row.operator("anime_pose_tools.select_to_edge")
+        row.operator("anime_pose_tools.select_to_top")
+        row.operator("anime_pose_tools.select_plus_edge")
+        row.operator("anime_pose_tools.select_plus_top")
+        box.operator("anime_pose_tools.select_bones_with_a_key")

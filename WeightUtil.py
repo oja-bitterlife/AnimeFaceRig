@@ -66,9 +66,11 @@ class ANIME_POSE_TOOLS_PT_weight_util(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        if context.mode == "OBJECT":
-            self.layout.label(text="add/remove:")
-            box = self.layout.box()
-            box.enabled = bpy.context.view_layer.objects.active.type == "MESH"
-            box.operator("anime_pose_tools.remove_deform")
-            box.operator("anime_pose_tools.add_groups_from_bones")
+        if context.mode != "OBJECT":
+            self.layout.enabled = False
+
+        self.layout.label(text="add/remove:")
+        box = self.layout.box()
+        box.enabled = bpy.context.view_layer.objects.active.type == "MESH"
+        box.operator("anime_pose_tools.remove_deform")
+        box.operator("anime_pose_tools.add_groups_from_bones")

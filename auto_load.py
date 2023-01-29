@@ -26,7 +26,7 @@ def init():
     ordered_classes = get_ordered_classes_to_register(modules)
 
     # 並び替え
-    from . import ActionUtil
+    from . import ActionEdit
     from . import AnimePoseTools
     from . import AnimExport
     from . import BonePhysics
@@ -36,7 +36,7 @@ def init():
     orders = [
         AnimePoseTools.ANIME_POSE_TOOLS_PT_ui,
         SelectBones.ANIME_POSE_TOOLS_PT_select_bones,
-        ActionUtil.ANIME_POSE_TOOLS_PT_action_util,
+        ActionEdit.ANIME_POSE_TOOLS_PT_action_edit,
         WeightUtil.ANIME_POSE_TOOLS_PT_weight_util,
         BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
         AnimExport.ANIME_POSE_TOOLS_PT_anim_export,

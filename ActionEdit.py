@@ -67,20 +67,22 @@ def delete_keyframes(context, targets):
 
 # UI描画設定
 # =================================================================================================
-class ANIME_POSE_TOOLS_PT_action_util(bpy.types.Panel):
-    bl_label = "Action Util"
+class ANIME_POSE_TOOLS_PT_action_edit(bpy.types.Panel):
+    bl_label = "Action Edit"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_parent_id = "APT_POSE_PT_UI"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        if context.mode == "POSE":
-            self.layout.label(text="Remove Keys from All Frame:")
-            box = self.layout.box()
-            row = box.row()
-            row.operator("anime_pose_tools.remove_loc_keys")
-            row.operator("anime_pose_tools.remove_rot_keys")
-            row.operator("anime_pose_tools.remove_scale_keys")
-            row.operator("anime_pose_tools.remove_other_keys")
+        if context.mode != "POSE":
+            self.layout.enabled = False
+
+        self.layout.label(text="Remove Keys from All Frame:")
+        box = self.layout.box()
+        row = box.row()
+        row.operator("anime_pose_tools.remove_loc_keys")
+        row.operator("anime_pose_tools.remove_rot_keys")
+        row.operator("anime_pose_tools.remove_scale_keys")
+        row.operator("anime_pose_tools.remove_other_keys")
 
