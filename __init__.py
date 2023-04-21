@@ -19,7 +19,7 @@ bl_info = {
     "version" : (0, 0, 2),
     "location" : "",
     "warning" : "",
-    "category" : "AHT"
+    "category" : "Animation"
 }
 
 from . import auto_load
