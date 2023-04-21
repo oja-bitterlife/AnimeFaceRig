@@ -9,7 +9,7 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
     bl_region_type = "UI"
     bl_category = "AHT"
     bl_idname = "APT_POSE_PT_UI"
-    # bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         pass
