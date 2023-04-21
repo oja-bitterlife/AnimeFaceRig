@@ -16,10 +16,14 @@ class ANIME_POSE_TOOLS_OT_listup_selected_bones(bpy.types.Operator):
         bone_names = []
 
         # 選択中ボーンの回収
-        for bone in armature.data.bones:
-            if bone.select:
+        if (context.mode == "POSE"):
+            for bone in context.selected_pose_bones:
                 bone_names.append(bone.name)
-
+        elif (context.mode == "EDIT_ARMATURE"):
+            for bone in armature.data.edit_bones:
+                if bone.select:
+                    bone_names.append(bone.name)
+            
         # output bones
         text = ""
         for bone_name in bone_names:
@@ -40,7 +44,7 @@ classes= [
 ]
 
 def draw(self, context, layout):
-    if context.mode != "POSE":
+    if context.mode != "POSE" and context.mode != "EDIT_ARMATURE":
         layout.enabled = False
 
     box = layout.box()

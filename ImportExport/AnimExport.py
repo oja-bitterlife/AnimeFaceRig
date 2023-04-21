@@ -195,10 +195,11 @@ classes = [
 ]
 
 def draw(parent, context, layout):
+    if context.view_layer.objects.active.type != "ARMATURE":
+        layout.enabled = False
     if context.mode != "OBJECT":
         layout.enabled = False
 
-    layout.enabled = context.view_layer.objects.active.type == "ARMATURE"
     layout.operator("anime_pose_tools.anim_import")
     layout.operator("anime_pose_tools.anim_export")
 
