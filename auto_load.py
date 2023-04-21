@@ -29,13 +29,13 @@ def init():
     from . import AnimePoseTools
     from . import UI_BonePhysics
     from . import UI_ActionEdit
-    from . import UI_VertexGroup
+    from . import UI_VertexGroupEdit
     from . import UI_ImportExport
 
     orders = [
         AnimePoseTools.ANIME_POSE_TOOLS_PT_ui,
         UI_ActionEdit.ANIME_POSE_TOOLS_PT_action_edit,
-        UI_VertexGroup.ANIME_POSE_TOOLS_PT_weight_util,
+        UI_VertexGroupEdit.ANIME_POSE_TOOLS_PT_weight_util,
         UI_BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
         UI_ImportExport.ANIME_POSE_TOOLS_PT_import_export,
     ]
