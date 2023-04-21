@@ -4,7 +4,7 @@ import bpy
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_remove_deform(bpy.types.Operator):
     bl_idname = "anime_pose_tools.remove_deform"
-    bl_label = "Remove Deform Groups"
+    bl_label = "Remove Deform Bones"
 
     # execute
     def execute(self, context):
@@ -26,7 +26,7 @@ class ANIME_POSE_TOOLS_OT_remove_deform(bpy.types.Operator):
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_add_groups_from_bones(bpy.types.Operator):
     bl_idname = "anime_pose_tools.add_groups_from_bones"
-    bl_label = "Add Groups (Selected Bones)"
+    bl_label = "Add Selected Deform Bones"
 
     # execute
     def execute(self, context):
@@ -68,8 +68,8 @@ class ANIME_POSE_TOOLS_PT_weight_util(bpy.types.Panel):
         if context.mode != "OBJECT":
             self.layout.enabled = False
 
-        self.layout.label(text="add/remove:")
+        self.layout.label(text="Vertex Group Edit:")
         box = self.layout.box()
         box.enabled = bpy.context.view_layer.objects.active.type == "MESH"
-        box.operator("anime_pose_tools.remove_deform")
         box.operator("anime_pose_tools.add_groups_from_bones")
+        box.operator("anime_pose_tools.remove_deform")
