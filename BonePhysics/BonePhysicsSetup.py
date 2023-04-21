@@ -1,15 +1,7 @@
 import bpy
 from mathutils import Vector
 
-from .Util import BoneUtil, MeshUtil
-
-
-DEFAULT_WORK_COLLECTION = "APT_Work"
-COLLISION_BOX_PREFIX = "APT_ColBox@"
-BONE_IK_PREFIX = "APT_IK"
-
-MESH_MARGE_THRESHOLD = 0.0005  # 通常のWeldの半分で、CleanUpの5倍
-
+from . import BonePhysicsUtil
 
 # 箱生成用
 BOX_VERTS = [(0,-0.5,0),(0,0.5,0),  # 0-1
@@ -50,7 +42,7 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
 
             # 登録先コレクション取得
             if context.scene.work_collection == None or len(context.scene.work_collection) == 0:  # からの場合はデフォルトで再設定
-                context.scene.work_collection = DEFAULT_WORK_COLLECTION
+                context.scene.work_collection = BonePhysicsUtil.DEFAULT_WORK_COLLECTION
             collection = bpy.data.collections.get(context.scene.work_collection)
             if collection == None:
                 collection = bpy.data.collections.new(context.scene.work_collection)
@@ -74,7 +66,7 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
             mesh.update(calc_edges=True)
 
             # オブジェクトにしてコレクションに登録
-            obj = bpy.data.objects.new(COLLISION_BOX_PREFIX + pose_bone.name, mesh)
+            obj = bpy.data.objects.new(BonePhysicsUtil.COLLISION_BOX_PREFIX + pose_bone.name, mesh)
             obj.location = box_center
             collection.objects.link(obj)
 
@@ -95,7 +87,7 @@ class ANIME_POSE_TOOLS_OT_create_collision_mesh(bpy.types.Operator):
 
         # 頂点のマージ(Clothの場合必須)
         bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.remove_doubles(threshold=MESH_MARGE_THRESHOLD)
+        bpy.ops.mesh.remove_doubles(threshold=BonePhysicsUtil.MESH_MARGE_THRESHOLD)
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # オブジェクトに対する設定
@@ -160,7 +152,7 @@ class ANIME_POSE_TOOLS_OT_remove_mesh(bpy.types.Operator):
             # 削除するのはWork下だけ
             if collection.objects.get(obj.name) != None:
                 # COLLISION_BOXの削除
-                if obj.name.startswith(COLLISION_BOX_PREFIX):
+                if obj.name.startswith(BonePhysicsUtil.COLLISION_BOX_PREFIX):
                         bpy.data.objects.remove(obj)
 
         return{'FINISHED'}
@@ -182,13 +174,13 @@ class ANIME_POSE_TOOLS_OT_ik_setup(bpy.types.Operator):
         # 二重登録しないように
         for pose_bone in bpy.context.selected_pose_bones:
             for const in pose_bone.constraints:
-                if const.name.startswith(BONE_IK_PREFIX):
+                if const.name.startswith(BonePhysicsUtil.BONE_IK_PREFIX):
                     pose_bone.constraints.remove(const)
 
         # IK追加
         for pose_bone in bpy.context.selected_pose_bones:
             const = pose_bone.constraints.new('IK')
-            const.name = BONE_IK_PREFIX
+            const.name = BonePhysicsUtil.BONE_IK_PREFIX
             const.target = context.scene.ik_target_mesh
             const.subtarget = pose_bone.bone.name
             const.chain_count = 1
@@ -207,7 +199,7 @@ class ANIME_POSE_TOOLS_OT_ik_remove(bpy.types.Operator):
         # 名前で判断して削除
         for pose_bone in bpy.context.selected_pose_bones:
             for const in pose_bone.constraints:
-                if const.name.startswith(BONE_IK_PREFIX):
+                if const.name.startswith(BonePhysicsUtil.BONE_IK_PREFIX):
                     pose_bone.constraints.remove(const)
 
         return{'FINISHED'}
@@ -215,37 +207,43 @@ class ANIME_POSE_TOOLS_OT_ik_remove(bpy.types.Operator):
 
 # UI描画設定
 # =================================================================================================
-class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
-    bl_label = "Bone Physics"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_parent_id = "APT_POSE_PT_UI"
-    bl_options = {'DEFAULT_CLOSED'}
+label = "Setup"
+classes = [
+    ANIME_POSE_TOOLS_OT_create_collision_mesh,
+    ANIME_POSE_TOOLS_OT_remove_mesh,
+    ANIME_POSE_TOOLS_OT_ik_setup,
+    ANIME_POSE_TOOLS_OT_ik_remove,
+]
 
-    def draw(self, context):
-        if context.mode == "POSE":
-            self.layout.enabled == False
-        self.layout.label(text="Setup:")
-        box = self.layout.box()
-        box.prop(context.scene, "work_collection", text="Work Collection", slider=True)
+def draw(parent, context, layout):
+    if context.mode == "POSE":
+        layout.enabled == False
+    box = layout.box()
+    box.prop(context.scene, "work_collection", text="Work Collection", slider=True)
 
-        mesh = box.box()
-        mesh.prop(context.scene, "collision_box_width", text="Collision Width", slider=True)
-        mesh.prop(context.scene, "collision_box_height", text="Collision Height", slider=True)
-        mesh_op = mesh.row()
-        mesh_op.operator("anime_pose_tools.create_collision_mesh")
-        mesh_op.operator("anime_pose_tools.remove_mesh")
+    mesh = box.box()
+    mesh.prop(context.scene, "collision_box_width", text="Collision Width", slider=True)
+    mesh.prop(context.scene, "collision_box_height", text="Collision Height", slider=True)
+    mesh_op = mesh.row()
+    mesh_op.operator("anime_pose_tools.create_collision_mesh")
+    mesh_op.operator("anime_pose_tools.remove_mesh")
 
-        ik = box.box()
-        ik.prop(context.scene, "ik_target_mesh", text="IK Target Mesh")
-        ik_op = ik.row()
-        ik_op.operator("anime_pose_tools.ik_setup")
-        ik_op.operator("anime_pose_tools.ik_remove")
+    ik = box.box()
+    ik.prop(context.scene, "ik_target_mesh", text="IK Target Mesh")
+    ik_op = ik.row()
+    ik_op.operator("anime_pose_tools.ik_setup")
+    ik_op.operator("anime_pose_tools.ik_remove")
 
 
-# =================================================================================================
 def register():
-    bpy.types.Scene.work_collection = bpy.props.StringProperty(name="Work Collection Name", default=DEFAULT_WORK_COLLECTION)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+    bpy.types.Scene.work_collection = bpy.props.StringProperty(name="Work Collection Name", default=BonePhysicsUtil.DEFAULT_WORK_COLLECTION)
     bpy.types.Scene.collision_box_width = bpy.props.FloatProperty(name="Collision Box Width", min=0, max=1, default=0.25)
     bpy.types.Scene.collision_box_height = bpy.props.FloatProperty(name="Collision Box Height", min=0, max=1, default=0.5)
     bpy.types.Scene.ik_target_mesh = bpy.props.PointerProperty(type=bpy.types.Object)
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)

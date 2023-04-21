@@ -1,17 +1,18 @@
 import bpy
-from .ImportExport import AnimExport, ListupBones
+from .BonePhysics import BonePhysicsSwitch, BonePhysicsSetup
 
 modules = [
-    AnimExport,
-    ListupBones
+    BonePhysicsSetup,
+    BonePhysicsSwitch
 ]
 
-class ANIME_POSE_TOOLS_PT_import_export(bpy.types.Panel):
-    bl_label = "Import/Export"
+# UI描画設定
+# =================================================================================================
+class ANIME_POSE_TOOLS_PT_bone_physics(bpy.types.Panel):
+    bl_label = "Bone Physics"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_parent_id = "APT_POSE_PT_UI"
-    bl_idname = "APT_POSE_PT_IMPORT_EXPORT"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):

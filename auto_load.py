@@ -28,8 +28,7 @@ def init():
 
     # 並び替え
     from . import AnimePoseTools
-    from . import BonePhysics
-    from . import BonePhysicsSwitch
+    from . import UI_BonePhysics
     from . import SelectBones
     from . import WeightUtil
     from . import UI_ImportExport
@@ -39,8 +38,7 @@ def init():
         SelectBones.ANIME_POSE_TOOLS_PT_select_bones,
         ActionEdit.ANIME_POSE_TOOLS_PT_action_edit,
         WeightUtil.ANIME_POSE_TOOLS_PT_weight_util,
-        BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
-        BonePhysicsSwitch.ANIME_POSE_TOOLS_PT_bone_physics_switch,
+        UI_BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
         UI_ImportExport.ANIME_POSE_TOOLS_PT_import_export,
     ]
     no_ordered = filter(lambda c: c not in orders, ordered_classes)

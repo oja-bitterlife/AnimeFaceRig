@@ -1,8 +1,9 @@
 import bpy
+from . import BonePhysicsUtil
 
 # Enable/Disable Cloth
 # =================================================================================================
-class ANIME_POSE_TOOLS_OT_enable_cloth(bpy.types.Operator):
+class ANIME_POSE_TOOLS_OT_enable_cloth_modifire(bpy.types.Operator):
     bl_idname = "anime_pose_tools.enable_cloth_modifire"
     bl_label = "Enable Cloth"
 
@@ -15,7 +16,7 @@ class ANIME_POSE_TOOLS_OT_enable_cloth(bpy.types.Operator):
                 obj.modifiers["Cloth"].show_render = True
         return {'FINISHED'}
 
-class ANIME_POSE_TOOLS_OT_disable_cloth(bpy.types.Operator):
+class ANIME_POSE_TOOLS_OT_disable_cloth_modifire(bpy.types.Operator):
     bl_idname = "anime_pose_tools.disable_cloth_modifire"
     bl_label = "Disable Cloth"
 
@@ -76,34 +77,50 @@ class ANIME_POSE_TOOLS_OT_disable_cloth_ik(bpy.types.Operator):
         for pose_bone in armature.pose.bones:
             if pose_bone.bone.select:
                 for constraint in pose_bone.constraints:
-                    if constraint.name == BonePhysics.BONE_IK_PREFIX:
+                    if constraint.name == BonePhysicsUtil.BONE_IK_PREFIX:
                         constraint.enabled = False
         return {'FINISHED'}
 
 
 # UI描画設定
 # =================================================================================================
-class ANIME_POSE_TOOLS_PT_bone_physics_switch(bpy.types.Panel):
-    bl_label = "Physics Switch"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_parent_id = "APT_POSE_PT_UI"
-    bl_options = {'DEFAULT_CLOSED'}
+label = "Switch"
+classes = [
+    ANIME_POSE_TOOLS_OT_enable_cloth_modifire,
+    ANIME_POSE_TOOLS_OT_disable_cloth_modifire,
+    ANIME_POSE_TOOLS_OT_select_cloth_ik,
+    ANIME_POSE_TOOLS_OT_enable_cloth_ik,
+    ANIME_POSE_TOOLS_OT_disable_cloth_ik,
+]
 
-    def draw(self, context):
-        self.layout.label(text="IK Enable/Disable:")
+def draw(parent, context, layout):
+    layout.label(text="IK Enable/Disable:")
 
-        box = self.layout.box()
-        box.enabled = context.mode == "POSE"
-        box.operator("anime_pose_tools.select_cloth_ik")
-        row = box.row()
-        row.operator("anime_pose_tools.enable_cloth_ik")
-        row.operator("anime_pose_tools.disable_cloth_ik")
+    box = layout.box()
+    box.enabled = context.mode == "POSE"
+    box.operator("anime_pose_tools.select_cloth_ik")
+    row = box.row()
+    row.operator("anime_pose_tools.enable_cloth_ik")
+    row.operator("anime_pose_tools.disable_cloth_ik")
 
-        self.layout.label(text="Cloth Enable/Disable:")
+    layout.label(text="Cloth Enable/Disable:")
 
-        box = self.layout.box()
-        box.enabled = context.mode == "OBJECT" and bpy.context.view_layer.objects.active.type == "MESH"
-        row = box.row()
-        row.operator("anime_pose_tools.enable_cloth_modifire")
-        row.operator("anime_pose_tools.disable_cloth_modifire")
+    box = layout.box()
+    box.enabled = context.mode == "OBJECT" and bpy.context.view_layer.objects.active.type == "MESH"
+    row = box.row()
+    row.operator("anime_pose_tools.enable_cloth_modifire")
+    row.operator("anime_pose_tools.disable_cloth_modifire")
+
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+    bpy.types.Scene.work_collection = bpy.props.StringProperty(name="Work Collection Name", default=BonePhysicsUtil.DEFAULT_WORK_COLLECTION)
+    bpy.types.Scene.collision_box_width = bpy.props.FloatProperty(name="Collision Box Width", min=0, max=1, default=0.25)
+    bpy.types.Scene.collision_box_height = bpy.props.FloatProperty(name="Collision Box Height", min=0, max=1, default=0.5)
+    bpy.types.Scene.ik_target_mesh = bpy.props.PointerProperty(type=bpy.types.Object)
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)

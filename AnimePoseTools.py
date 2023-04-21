@@ -22,9 +22,11 @@ class ANIME_POSE_TOOLS_PT_ui(bpy.types.Panel):
 
         # 状態によって使うUIを切り替える
         if context.mode == "OBJECT":
+            PositionMode.ui_draw(context, self.layout)
+
             # Aramture選択時
-            if bpy.context.view_layer.objects.active.type == "ARMATURE":
-                PositionMode.ui_draw(context, self.layout)
+            if bpy.context.view_layer.objects.active.type != "ARMATURE":
+                self.layout.disable()
 
         if context.mode == "POSE":
             # Aramtureが選択されていない
