@@ -1,12 +1,11 @@
 import bpy
-from .ActionEdit import BoneSelector, BoneVisible, CursorToSelected, PositionMode, RemoveKeys
+from .ActionEdit import BoneSelector, BoneVisible, CursorToSelected, PositionMode
 
 modules = [
     CursorToSelected,
     PositionMode,
     BoneSelector,
     BoneVisible,
-    RemoveKeys,
 ] 
 
 class ANIME_POSE_TOOLS_PT_action_edit(bpy.types.Panel):

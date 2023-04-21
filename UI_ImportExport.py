@@ -1,8 +1,7 @@
 import bpy
-from .ImportExport import AnimExport, ListupBones
+from .ImportExport import ListupBones
 
 modules = [
-    AnimExport,
     ListupBones
 ]
 
