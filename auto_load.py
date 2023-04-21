@@ -27,7 +27,6 @@ def init():
 
     # 並び替え
     from . import AnimePoseTools
-    from . import UI_BonePhysics
     from . import UI_ActionEdit
     from . import UI_VertexGroupEdit
     from . import UI_ImportExport
@@ -36,7 +35,6 @@ def init():
         AnimePoseTools.ANIME_POSE_TOOLS_PT_ui,
         UI_ActionEdit.ANIME_POSE_TOOLS_PT_action_edit,
         UI_VertexGroupEdit.ANIME_POSE_TOOLS_PT_weight_util,
-        UI_BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
         UI_ImportExport.ANIME_POSE_TOOLS_PT_import_export,
     ]
     no_ordered = filter(lambda c: c not in orders, ordered_classes)
