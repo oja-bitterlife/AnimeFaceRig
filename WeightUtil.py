@@ -1,6 +1,5 @@
 import bpy
 
-
 # Remove Deform Weights
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_remove_deform(bpy.types.Operator):

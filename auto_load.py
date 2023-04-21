@@ -1,5 +1,4 @@
 import os
-from . import ActionEdit
 import bpy
 import sys
 import typing
@@ -29,14 +28,13 @@ def init():
     # 並び替え
     from . import AnimePoseTools
     from . import UI_BonePhysics
-    from . import SelectBones
+    from . import UI_ActionEdit
     from . import WeightUtil
     from . import UI_ImportExport
 
     orders = [
         AnimePoseTools.ANIME_POSE_TOOLS_PT_ui,
-        SelectBones.ANIME_POSE_TOOLS_PT_select_bones,
-        ActionEdit.ANIME_POSE_TOOLS_PT_action_edit,
+        UI_ActionEdit.ANIME_POSE_TOOLS_PT_action_edit,
         WeightUtil.ANIME_POSE_TOOLS_PT_weight_util,
         UI_BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
         UI_ImportExport.ANIME_POSE_TOOLS_PT_import_export,

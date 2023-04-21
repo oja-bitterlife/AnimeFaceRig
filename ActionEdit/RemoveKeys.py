@@ -67,22 +67,31 @@ def delete_keyframes(context, targets):
 
 # UI描画設定
 # =================================================================================================
-class ANIME_POSE_TOOLS_PT_action_edit(bpy.types.Panel):
-    bl_label = "Action Edit"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_parent_id = "APT_POSE_PT_UI"
-    bl_options = {'DEFAULT_CLOSED'}
+label = "Remove Keys in All Frame"
 
-    def draw(self, context):
-        if context.mode != "POSE":
-            self.layout.enabled = False
+classes = [
+    ANIME_POSE_TOOLS_OT_remove_loc_keys,
+    ANIME_POSE_TOOLS_OT_remove_rot_keys,
+    ANIME_POSE_TOOLS_OT_remove_scale_keys,
+    ANIME_POSE_TOOLS_OT_remove_other_keys,
+]
 
-        self.layout.label(text="Remove Keys from All Frame:")
-        box = self.layout.box()
-        row = box.row()
-        row.operator("anime_pose_tools.remove_loc_keys")
-        row.operator("anime_pose_tools.remove_rot_keys")
-        row.operator("anime_pose_tools.remove_scale_keys")
-        row.operator("anime_pose_tools.remove_other_keys")
+def draw(parent, context, layout):
+    if context.mode != "POSE":
+        layout.enabled = False
+
+    row = layout.row()
+    row.operator("anime_pose_tools.remove_loc_keys")
+    row.operator("anime_pose_tools.remove_rot_keys")
+    row.operator("anime_pose_tools.remove_scale_keys")
+    row.operator("anime_pose_tools.remove_other_keys")
+
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
