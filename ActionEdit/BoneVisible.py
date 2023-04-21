@@ -90,9 +90,6 @@ classes = [
 ]
 
 def draw(parent, context, layout):
-    if context.mode != "POSE":
-        layout.enabled = False
-
     row = layout.row()
     row.alignment = 'EXPAND'
     row.operator("anime_pose_tools.show_deform_only")

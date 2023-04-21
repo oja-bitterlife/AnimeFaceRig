@@ -77,7 +77,7 @@ class ANIME_POSE_TOOLS_OT_select_to_top(bpy.types.Operator):
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_select_plus_edge(bpy.types.Operator):
     bl_idname = "anime_pose_tools.select_plus_edge"
-    bl_label = "Plus Edge"
+    bl_label = "+Edge"
 
     # execute
     def execute(self, context):
@@ -92,7 +92,7 @@ class ANIME_POSE_TOOLS_OT_select_plus_edge(bpy.types.Operator):
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_select_plus_top(bpy.types.Operator):
     bl_idname = "anime_pose_tools.select_plus_top"
-    bl_label = "Plus Top"
+    bl_label = "+Top"
 
     # execute
     def execute(self, context):
@@ -137,10 +137,11 @@ def draw(parent, context, layout):
         layout.enabled = False
 
     row = layout.row()
-    row.operator("anime_pose_tools.select_to_edge")
-    row.operator("anime_pose_tools.select_to_top")
-    row.operator("anime_pose_tools.select_plus_edge")
     row.operator("anime_pose_tools.select_plus_top")
+    row.operator("anime_pose_tools.select_to_top")
+    row = layout.row()
+    row.operator("anime_pose_tools.select_plus_edge")
+    row.operator("anime_pose_tools.select_to_edge")
     layout.operator("anime_pose_tools.select_bones_with_a_key")
 
 

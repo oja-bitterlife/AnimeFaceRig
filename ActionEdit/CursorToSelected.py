@@ -47,7 +47,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.target_head_tail_weight = bpy.props.FloatProperty(name="TargetHeadTailWeight", min=0, max=1, default=1)
+    bpy.types.Scene.target_head_tail_weight = bpy.props.FloatProperty(name="TargetHeadTailWeight", min=0, max=1, default=0)
 
 def unregister():
     for cls in reversed(classes):
