@@ -1,4 +1,5 @@
 import os
+from . import ActionEdit
 import bpy
 import sys
 import typing
@@ -26,14 +27,13 @@ def init():
     ordered_classes = get_ordered_classes_to_register(modules)
 
     # 並び替え
-    from . import ActionEdit
     from . import AnimePoseTools
-    from . import AnimExport
     from . import BonePhysics
     from . import BonePhysicsSwitch
-    from . import ListupBones
     from . import SelectBones
     from . import WeightUtil
+    from . import UI_ImportExport
+
     orders = [
         AnimePoseTools.ANIME_POSE_TOOLS_PT_ui,
         SelectBones.ANIME_POSE_TOOLS_PT_select_bones,
@@ -41,8 +41,7 @@ def init():
         WeightUtil.ANIME_POSE_TOOLS_PT_weight_util,
         BonePhysics.ANIME_POSE_TOOLS_PT_bone_physics,
         BonePhysicsSwitch.ANIME_POSE_TOOLS_PT_bone_physics_switch,
-        AnimExport.ANIME_POSE_TOOLS_PT_anim_export,
-        ListupBones.ANIME_POSE_TOOLS_PT_listup_bones,
+        UI_ImportExport.ANIME_POSE_TOOLS_PT_import_export,
     ]
     no_ordered = filter(lambda c: c not in orders, ordered_classes)
     ordered_classes = list(orders) + list(no_ordered)
@@ -75,6 +74,7 @@ def get_all_submodules(directory):
     return list(iter_submodules(directory, directory.name))
 
 def iter_submodules(path, package_name):
+    print(path, package_name)
     for name in sorted(iter_submodule_names(path)):
         yield importlib.import_module("." + name, package_name)
 

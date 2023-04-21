@@ -188,19 +188,24 @@ class ANIME_POSE_TOOLS_OT_anim_import(bpy.types.Operator):
 
 # UI描画設定
 # =================================================================================================
-class ANIME_POSE_TOOLS_PT_anim_export(bpy.types.Panel):
-    bl_label = "Anim Export"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_parent_id = "APT_POSE_PT_UI"
-    bl_options = {'DEFAULT_CLOSED'}
+label = "Import/Export Animations"
+classes = [
+    ANIME_POSE_TOOLS_OT_anim_import,
+    ANIME_POSE_TOOLS_OT_anim_export
+]
 
-    def draw(self, context):
-        if context.mode != "OBJECT":
-            self.layout.enabled = False
+def draw(parent, context, layout):
+    if context.mode != "OBJECT":
+        layout.enabled = False
 
-        self.layout.label(text="Export/Import Animations:")
-        box = self.layout.box()
-        box.enabled = bpy.context.view_layer.objects.active.type == "ARMATURE"
-        box.operator("anime_pose_tools.anim_export")
-        box.operator("anime_pose_tools.anim_import")
+    layout.enabled = context.view_layer.objects.active.type == "ARMATURE"
+    layout.operator("anime_pose_tools.anim_import")
+    layout.operator("anime_pose_tools.anim_export")
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)

@@ -34,22 +34,27 @@ class ANIME_POSE_TOOLS_OT_listup_selected_bones(bpy.types.Operator):
 
 # UI描画設定
 # =================================================================================================
-class ANIME_POSE_TOOLS_PT_listup_bones(bpy.types.Panel):
-    bl_label = "Listup Selected Bones"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_parent_id = "APT_POSE_PT_UI"
-    bl_options = {'DEFAULT_CLOSED'}
+label = "ListupBones"
+classes= [
+    ANIME_POSE_TOOLS_OT_listup_selected_bones,
+]
 
-    def draw(self, context):
-        if context.mode != "POSE":
-            self.layout.enabled = False
+def draw(self, context, layout):
+    if context.mode != "POSE":
+        layout.enabled = False
 
-        box = self.layout.box()
-        box.operator("anime_pose_tools.listup_selected_bones")
-        box.prop(context.scene, "output_bones", text="Bone List:")
+    box = layout.box()
+    box.operator("anime_pose_tools.listup_selected_bones")
+    box.prop(context.scene, "output_bones", text="Bone List:")
 
 
 # =================================================================================================
 def register():
     bpy.types.Scene.output_bones = bpy.props.StringProperty(name="OutputSelectedBones")
+
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
