@@ -6,7 +6,7 @@ import re
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_show_deform_only(bpy.types.Operator):
     bl_idname = "anime_pose_tools.show_deform_only"
-    bl_label = "Deform"
+    bl_label = "Hide Deform"
 
     # execute
     def execute(self, context):
@@ -14,7 +14,8 @@ class ANIME_POSE_TOOLS_OT_show_deform_only(bpy.types.Operator):
         armature = bpy.context.active_object
         for pose_bone in armature.pose.bones:
             bone = context.object.data.bones[pose_bone.name]
-            pose_bone.bone.hide = not bone.use_deform
+            if bone.use_deform:
+                pose_bone.bone.hide = True
 
         return {'FINISHED'}
 
@@ -23,7 +24,7 @@ class ANIME_POSE_TOOLS_OT_show_deform_only(bpy.types.Operator):
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_show_control_only(bpy.types.Operator):
     bl_idname = "anime_pose_tools.show_control_only"
-    bl_label = "Control"
+    bl_label = "Hide Control"
 
     # execute
     def execute(self, context):
@@ -31,16 +32,17 @@ class ANIME_POSE_TOOLS_OT_show_control_only(bpy.types.Operator):
         armature = bpy.context.active_object
         for pose_bone in armature.pose.bones:
             bone = context.object.data.bones[pose_bone.name]
-            pose_bone.bone.hide = bone.use_deform
+            if not bone.use_deform:
+                pose_bone.bone.hide = True
 
         return {'FINISHED'}
 
 
 # Show All
 # =================================================================================================
-class ANIME_POSE_TOOLS_OT_show_all(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.show_all"
-    bl_label = "All"
+class ANIME_POSE_TOOLS_OT_show_all_bones(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.show_all_bones"
+    bl_label = "Show All Bones"
 
     # execute
     def execute(self, context):
@@ -48,6 +50,40 @@ class ANIME_POSE_TOOLS_OT_show_all(bpy.types.Operator):
         armature = bpy.context.active_object
         for pose_bone in armature.pose.bones:
             pose_bone.bone.hide = False
+
+        return {'FINISHED'}
+
+
+# Hide L
+# =================================================================================================
+class ANIME_POSE_TOOLS_OT_hide_l(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.hide_l"
+    bl_label = "Hide L"
+
+    # execute
+    def execute(self, context):
+        # _LのみHide
+        armature = bpy.context.active_object
+        for pose_bone in armature.pose.bones:
+            if "L" in re.split(r'[\._]', pose_bone.name.upper()):
+                pose_bone.bone.hide = True
+
+        return {'FINISHED'}
+
+
+# Hide R
+# =================================================================================================
+class ANIME_POSE_TOOLS_OT_hide_r(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.hide_r"
+    bl_label = "Hide R"
+
+    # execute
+    def execute(self, context):
+        # _RのみHide
+        armature = bpy.context.active_object
+        for pose_bone in armature.pose.bones:
+            if "R" in re.split(r'[\._]', pose_bone.name.upper()):
+                pose_bone.bone.hide = True
 
         return {'FINISHED'}
 
@@ -85,17 +121,26 @@ label = "Bone Visible"
 classes = [
     ANIME_POSE_TOOLS_OT_show_deform_only,
     ANIME_POSE_TOOLS_OT_show_control_only,
-    ANIME_POSE_TOOLS_OT_show_all,
+    ANIME_POSE_TOOLS_OT_show_all_bones,
+    ANIME_POSE_TOOLS_OT_hide_l,
+    ANIME_POSE_TOOLS_OT_hide_r,
     ANIME_POSE_TOOLS_OT_show_all_layers,
 ]
 
 def draw(parent, context, layout):
-    row = layout.row()
-    row.alignment = 'EXPAND'
+    layout.operator("anime_pose_tools.show_all_layers")
+
+    box = layout.box()
+    box.operator("anime_pose_tools.show_all_bones")
+
+    row = box.row()
+    # row.alignment = 'EXPAND'
     row.operator("anime_pose_tools.show_deform_only")
     row.operator("anime_pose_tools.show_control_only")
-    row.operator("anime_pose_tools.show_all")
-    layout.operator("anime_pose_tools.show_all_layers")
+
+    row = box.row()
+    row.operator("anime_pose_tools.hide_l")
+    row.operator("anime_pose_tools.hide_r")
 
 
 def register():
