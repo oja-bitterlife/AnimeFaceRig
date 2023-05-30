@@ -103,19 +103,33 @@ class ANIME_POSE_TOOLS_OT_select_plus_top(bpy.types.Operator):
         return{'FINISHED'}
 
 
-# Show Only Deform Bones
+# Select L/R
 # =================================================================================================
-class ANIME_POSE_TOOLS_OT_show_deform_only(bpy.types.Operator):
-    bl_idname = "anime_pose_tools.show_deform_only"
-    bl_label = "Deform"
+class ANIME_POSE_TOOLS_OT_select_L(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.select_l"
+    bl_label = "L"
 
     # execute
     def execute(self, context):
-        # 全PoseBone対象
+        # _LのみSelect
         armature = bpy.context.active_object
         for pose_bone in armature.pose.bones:
-            bone = context.object.data.bones[pose_bone.name]
-            pose_bone.bone.hide = not bone.use_deform
+            if "L" in re.split(r'[\._]', pose_bone.name.upper()):
+                pose_bone.bone.select = True
+
+        return {'FINISHED'}
+
+class ANIME_POSE_TOOLS_OT_select_R(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.select_r"
+    bl_label = "R"
+
+    # execute
+    def execute(self, context):
+        # _RのみSelect
+        armature = bpy.context.active_object
+        for pose_bone in armature.pose.bones:
+            if "R" in re.split(r'[\._]', pose_bone.name.upper()):
+                pose_bone.bone.select = True
 
         return {'FINISHED'}
 
@@ -130,6 +144,8 @@ classes = [
     ANIME_POSE_TOOLS_OT_select_to_top,
     ANIME_POSE_TOOLS_OT_select_plus_edge,
     ANIME_POSE_TOOLS_OT_select_plus_top,
+    ANIME_POSE_TOOLS_OT_select_L,
+    ANIME_POSE_TOOLS_OT_select_R,
 ]
 
 def draw(parent, context, layout):
@@ -142,6 +158,9 @@ def draw(parent, context, layout):
     row = layout.row()
     row.operator("anime_pose_tools.select_plus_edge")
     row.operator("anime_pose_tools.select_to_edge")
+    row = layout.row()
+    row.operator("anime_pose_tools.select_l")
+    row.operator("anime_pose_tools.select_r")
     layout.operator("anime_pose_tools.select_bones_with_a_key")
 
 
