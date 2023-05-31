@@ -73,7 +73,7 @@ class ANIME_POSE_TOOLS_OT_select_to_top(bpy.types.Operator):
             self.rec_select_children(pose_bone.parent)
 
 
-# Select Plus Edge
+# Select Plus/Minus Edge
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_select_plus_edge(bpy.types.Operator):
     bl_idname = "anime_pose_tools.select_plus_edge"
@@ -87,8 +87,20 @@ class ANIME_POSE_TOOLS_OT_select_plus_edge(bpy.types.Operator):
 
         return{'FINISHED'}
 
+class ANIME_POSE_TOOLS_OT_select_minus_edge(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.select_minus_edge"
+    bl_label = "-Edge"
 
-# Select Plus Top
+    # execute
+    def execute(self, context):
+        target_bones = [pose_bone for pose_bone in bpy.context.selected_pose_bones if not any([child.bone.select for child in pose_bone.children])]
+        for target_bone in target_bones:
+            target_bone.bone.select = False
+
+        return{'FINISHED'}
+
+
+# Select Plus/Minus Top
 # =================================================================================================
 class ANIME_POSE_TOOLS_OT_select_plus_top(bpy.types.Operator):
     bl_idname = "anime_pose_tools.select_plus_top"
@@ -99,6 +111,19 @@ class ANIME_POSE_TOOLS_OT_select_plus_top(bpy.types.Operator):
         for pose_bone in bpy.context.selected_pose_bones:
             if pose_bone.parent:
                 pose_bone.parent.bone.select = True
+
+        return{'FINISHED'}
+
+class ANIME_POSE_TOOLS_OT_select_minus_top(bpy.types.Operator):
+    bl_idname = "anime_pose_tools.select_minus_top"
+    bl_label = "-Top"
+
+    # execute
+    def execute(self, context):
+        target_bones = [pose_bone for pose_bone in bpy.context.selected_pose_bones if not pose_bone.parent or pose_bone.parent.bone.select == False]
+
+        for target_bone in target_bones:
+            target_bone.bone.select = False
 
         return{'FINISHED'}
 
@@ -143,7 +168,9 @@ classes = [
     ANIME_POSE_TOOLS_OT_select_to_edge,
     ANIME_POSE_TOOLS_OT_select_to_top,
     ANIME_POSE_TOOLS_OT_select_plus_edge,
+    ANIME_POSE_TOOLS_OT_select_minus_edge,
     ANIME_POSE_TOOLS_OT_select_plus_top,
+    ANIME_POSE_TOOLS_OT_select_minus_top,
     ANIME_POSE_TOOLS_OT_select_L,
     ANIME_POSE_TOOLS_OT_select_R,
 ]
@@ -154,9 +181,11 @@ def draw(parent, context, layout):
 
     row = layout.row()
     row.operator("anime_pose_tools.select_plus_top")
+    row.operator("anime_pose_tools.select_minus_top")
     row.operator("anime_pose_tools.select_to_top")
     row = layout.row()
     row.operator("anime_pose_tools.select_plus_edge")
+    row.operator("anime_pose_tools.select_minus_edge")
     row.operator("anime_pose_tools.select_to_edge")
     row = layout.row()
     row.operator("anime_pose_tools.select_l")
